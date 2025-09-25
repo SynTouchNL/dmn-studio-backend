@@ -4,29 +4,25 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 
 import java.util.List;
-import java.util.UUID;
 
+@Table(name = "environments")
 @Entity
 public class Environment extends PanacheEntityBase {
-    /** TODO
-     *  Connectivity info of Camunda instances
-     */
+    // TODO Connectivity info of Camunda instances
 
-    @Id
-    @GeneratedValue(generator = "UUID")
-    private UUID id;
-
+    @Id @GeneratedValue
+    private Long id;
     private String name;
 
-    @OneToMany
+    @OneToMany( mappedBy = "deployedTo" )
     private List<Deployment> deployments;
 
-    public List<Deployment> getDeployments() {
-        return deployments;
+    public Long getId() {
+        return id;
     }
 
-    public void setDeployments(List<Deployment> deployments) {
-        this.deployments = deployments;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -37,11 +33,11 @@ public class Environment extends PanacheEntityBase {
         this.name = name;
     }
 
-    public UUID getId() {
-        return id;
+    public List<Deployment> getDeployments() {
+        return deployments;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setDeployments(List<Deployment> deployments) {
+        this.deployments = deployments;
     }
 }

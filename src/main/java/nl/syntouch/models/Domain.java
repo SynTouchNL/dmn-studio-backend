@@ -1,29 +1,27 @@
 package nl.syntouch.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.util.List;
-import java.util.UUID;
 
+@Table(name = "domains")
 @Entity
 public class Domain extends PanacheEntityBase {
-    @Id
-    @GeneratedValue(generator = "UUID")
-    private UUID id;
+    @Id @GeneratedValue
+    private Long id;
     private String name;
 
     @OneToMany(mappedBy = "domain")
+    @JsonBackReference
     List<DMN> dmns;
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -1,31 +1,49 @@
 package nl.syntouch.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 
 import java.util.List;
-import java.util.UUID;
 
+@Table(name = "dmns")
 @Entity
 public class DMN extends PanacheEntityBase {
-    @Id
-    @GeneratedValue(generator = "UUID")
-    private UUID id;
+    @Id @GeneratedValue
+    private Long id;
     private String name;
     private String owner;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Domain domain;
 
-    @OneToMany ( mappedBy = "dmn")
+    @OneToMany (mappedBy = "dmn")
+    @JsonManagedReference
     private List<DMNVersion> versions;
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<DMNVersion> getVersions() {
+        return versions;
+    }
+
+    public void setVersions(List<DMNVersion> versions) {
+        this.versions = versions;
+    }
+
+    public Domain getDomain() {
+        return domain;
+    }
+
+    public void setDomain(Domain domain) {
+        this.domain = domain;
     }
 
     public String getName() {
@@ -42,21 +60,5 @@ public class DMN extends PanacheEntityBase {
 
     public void setOwner(String owner) {
         this.owner = owner;
-    }
-
-    public Domain getDomain() {
-        return domain;
-    }
-
-    public void setDomain(Domain domain) {
-        this.domain = domain;
-    }
-
-    public List<DMNVersion> getVersions() {
-        return versions;
-    }
-
-    public void setVersions() {
-        this.versions = versions;
     }
 }

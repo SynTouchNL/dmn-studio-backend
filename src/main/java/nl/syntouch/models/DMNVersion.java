@@ -1,42 +1,56 @@
 package nl.syntouch.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
+import nl.syntouch.models.composites.DMNVersionId;
 
 import java.time.Instant;
 
-
 @Entity
+@IdClass(DMNVersionId.class)
+@Table(name = "versions")
 public class DMNVersion extends PanacheEntityBase {
 
-    public enum STATUS {
-        CONCEPT, TESTING, APPROVAL, READY
-    }
+//    public enum STATUS {
+//        CONCEPT, TESTING, APPROVAL, READY, ARCHIVED
+//    }
 
     @Id
-    private Long id;
+    @Column(name = "version", nullable = false)
+    private Long version;
 
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dmn_id", nullable = false)
+    @JsonBackReference
     private DMN dmn;
 
-    private STATUS status;
+    @Column(name = "status", nullable = false)
+    private Long status = 1L;
+
     @Lob @Basic(fetch = FetchType.LAZY)
+    @Column(name = "file_blob", nullable = false, columnDefinition = "BYTEA")
+    @JsonIgnore
     private byte[] file_blob;
 
-    // TODO Later connect to user?
-    private String modifiedBy;
+    @Column(name = "modified_by")
+    private String modifiedBy; // TODO Later connect to user?
+    @Column(name = "modified_date")
     private Instant modifiedDate = Instant.now();
 
-    // TODO Later connect to user?
-    private String createdBy;
+    @Column(name = "created_by", nullable = false)
+    private String createdBy; // TODO Later connect to user?
+    @Column(name = "created_date", nullable = false)
     private Instant createdDate = Instant.now();
 
-    public Long getId() {
-        return id;
+    public Long getVersion() {
+        return version;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public DMN getDmn() {
@@ -47,11 +61,11 @@ public class DMNVersion extends PanacheEntityBase {
         this.dmn = dmn;
     }
 
-    public STATUS getStatus() {
+    public Long getStatus() {
         return status;
     }
 
-    public void setStatus(STATUS status) {
+    public void setStatus(Long status) {
         this.status = status;
     }
 

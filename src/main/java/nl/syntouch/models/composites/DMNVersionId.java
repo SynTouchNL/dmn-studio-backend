@@ -1,0 +1,31 @@
+package nl.syntouch.models.composites;
+
+import jakarta.persistence.*;
+import java.io.Serializable;
+import java.util.Objects;
+
+@Embeddable
+public class DMNVersionId implements Serializable {
+    private Long dmn;
+    private Long version;
+
+    public DMNVersionId() {}
+    public DMNVersionId(Long dmn, Long version) {
+        this.dmn = dmn;
+        this.version = version;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DMNVersionId)) return false;
+        DMNVersionId that = (DMNVersionId) o;
+        return Objects.equals(dmn, that.dmn) &&
+                Objects.equals(version, that.version);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(dmn, version);
+    }
+}
