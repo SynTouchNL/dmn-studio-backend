@@ -1,8 +1,7 @@
 package nl.syntouch.rest;
 
-import io.quarkus.hibernate.orm.rest.data.panache.PanacheEntityResource;
 import nl.syntouch.models.DMN;
+import io.quarkus.hibernate.orm.rest.data.panache.PanacheEntityResource;
 
-public interface DMNResource extends PanacheEntityResource<DMN, Long> {
-
+public interface DMNResource extends PanacheEntityResource<DMN, Integer> {
 }

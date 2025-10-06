@@ -1,5 +1,6 @@
 package nl.syntouch.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 
@@ -8,20 +9,20 @@ import java.util.List;
 @Table(name = "environments")
 @Entity
 public class Environment extends PanacheEntityBase {
-    // TODO Connectivity info of Camunda instances
 
     @Id @GeneratedValue
-    private Long id;
+    private Integer id;
     private String name;
 
     @OneToMany( mappedBy = "deployedTo" )
+    @JsonManagedReference
     private List<Deployment> deployments;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

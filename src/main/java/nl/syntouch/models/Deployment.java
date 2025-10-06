@@ -1,21 +1,77 @@
 package nl.syntouch.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
+import nl.syntouch.models.composites.DeploymentId;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
 
 @Table(name = "deployments")
 @Entity
+@IdClass(DeploymentId.class)
 public class Deployment extends PanacheEntityBase {
-    @Id @GeneratedValue
-    private Long id;
+    // DATA STRUCTURE
+    @Id
+    public Integer id;
 
-    @OneToOne
-    private DMNVersion dmnVersion;
+    @Id
+    @ManyToOne
+    @JoinColumns({
+            @JoinColumn(name = "dmn_id", referencedColumnName = "dmn_id"),
+            @JoinColumn(name = "dmn_version", referencedColumnName = "version")
+    })
+    public DMNVersion version;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "environment_id", nullable = false)
+    @JsonBackReference
     private Environment deployedTo;
+    @Column(name = "deployed_by", nullable = false)
     private String deployedBy; //TODO Later connect to user?
+    @CreationTimestamp
+    @Column(name = "deployed_date", nullable = false)
     private Instant deployedTime = Instant.now();
+
+    // GETTERS & SETTERS
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public DMNVersion getVersion() {
+        return version;
+    }
+
+    public void setVersion(DMNVersion version) {
+        this.version = version;
+    }
+
+    public Environment getDeployedTo() {
+        return deployedTo;
+    }
+
+    public void setDeployedTo(Environment deployedTo) {
+        this.deployedTo = deployedTo;
+    }
+
+    public String getDeployedBy() {
+        return deployedBy;
+    }
+
+    public void setDeployedBy(String deployedBy) {
+        this.deployedBy = deployedBy;
+    }
+
+    public Instant getDeployedTime() {
+        return deployedTime;
+    }
+
+    public void setDeployedTime(Instant deployedTime) {
+        this.deployedTime = deployedTime;
+    }
 }
