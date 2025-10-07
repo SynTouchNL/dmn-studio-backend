@@ -9,7 +9,7 @@ import java.util.List;
 @Table(name = "domains")
 @Entity
 public class Domain extends PanacheEntityBase {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(length = 45, nullable = false)

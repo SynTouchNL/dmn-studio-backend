@@ -28,6 +28,7 @@ public class DMNVersion extends PanacheEntityBase {
     public DMN dmn;
 
     @Id
+    @Column(name = "version", nullable = false)
     public Integer version = 1;
 
     @Column(name = "status", nullable = false)

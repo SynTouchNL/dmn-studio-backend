@@ -10,6 +10,7 @@ public class DMNVersionId implements Serializable {
     private Integer version;
 
     public DMNVersionId() {}
+
     public DMNVersionId(Integer dmn, Integer version) {
         this.dmn = dmn;
         this.version = version;
