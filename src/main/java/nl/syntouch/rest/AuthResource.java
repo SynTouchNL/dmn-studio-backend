@@ -2,6 +2,8 @@ package nl.syntouch.rest;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import jakarta.inject.Inject;
 import nl.syntouch.services.KeycloakService;
@@ -27,7 +29,16 @@ public class AuthResource {
     public Response getUsers() {
         var tokenResponse = keycloakService.fetchToken();
         String accessToken = (String) tokenResponse.get("access_token");
-        Map<String, Object> usersResponse = keycloakService.fetchUsers(accessToken);
+        List<Map<String, Object>> usersResponse = keycloakService.fetchUsers(accessToken);
         return Response.ok(usersResponse).build();
+    }
+
+    @GET
+    @Path("/group-users/{groupId}")
+    public Response getGroupUsers(@PathParam("groupId") String groupId) {
+        var tokenResponse = keycloakService.fetchToken();
+        String accessToken = (String) tokenResponse.get("access_token");
+        List<Map<String, Object>> groupUsersResponse = keycloakService.fetchGroupUsers(groupId, accessToken);
+        return Response.ok(groupUsersResponse).build();
     }
 }

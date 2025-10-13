@@ -18,7 +18,11 @@ public class KeycloakService {
         return keycloakClient.getToken("test-master", "iEM8UPcz2QgY1OfithUUzR6lLpW5LEtT", "client_credentials");
     }
 
-    public Map<String, Object> fetchUsers(String token) {
+    public List<Map<String, Object>> fetchUsers(String token) {
         return keycloakClient.getUsers("Bearer " + token);
+    }
+
+    public List<Map<String, Object>> fetchGroupUsers(String groupId, String token) {
+        return keycloakClient.getGroupUsers(groupId, "Bearer " + token);
     }
 }

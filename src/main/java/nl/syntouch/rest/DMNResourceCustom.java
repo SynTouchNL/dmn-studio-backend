@@ -7,12 +7,8 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import nl.syntouch.models.DMN;
 import nl.syntouch.models.DMNVersion;
-import nl.syntouch.models.DTOs.DMNCreateDTO;
-import nl.syntouch.models.DTOs.DMNUpdateFileDTO;
-import nl.syntouch.models.DTOs.DMNVersionCreateDTO;
-import nl.syntouch.models.DTOs.DMNVersionDTO;
+import nl.syntouch.models.DTOs.*;
 import nl.syntouch.models.Domain;
-import org.apache.http.protocol.HTTP;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +68,27 @@ public class DMNResourceCustom {
         version.setCreatedBy(versionDTO.createdBy);
         version.persist();
         return version;
+    }
+
+    @Path("/{dmnId}/{version}/")
+    @Authenticated
+    @PUT
+    @Transactional
+    public Response updateVersion(@PathParam("dmnId") Integer dmnId, @PathParam("version") Integer versionId, DMNVersionUpdateDTO versionDTO) {
+        DMNVersion dmn = DMNVersion.find("dmn.id = ?1 and version = ?2", dmnId, versionId).firstResult();
+
+        if (dmn == null) {
+            throw new NotFoundException("DMN not found");
+        }
+
+        if (dmn.getStatus() >= 4) {
+            throw new BadRequestException("Cannot update a DMN version that is production or archived.");
+        }
+
+        dmn.setStatus(versionDTO.status);
+        dmn.setModifiedBy(versionDTO.modifiedBy);
+        dmn.persist();
+        return Response.status(Response.Status.OK).entity(dmn).build();
     }
 
     @Path("/{dmnId}/{versionId}/file")
