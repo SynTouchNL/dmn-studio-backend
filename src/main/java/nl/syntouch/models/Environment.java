@@ -10,35 +10,20 @@ import java.util.List;
 @Entity
 public class Environment extends PanacheEntityBase {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
 
-    @OneToMany( mappedBy = "deployedTo" )
-    @JsonManagedReference
+    @JsonManagedReference("deployments")
+    @OneToMany(mappedBy = "deployedTo", fetch = FetchType.LAZY)
     private List<Deployment> deployments;
 
-    public Integer getId() {
-        return id;
-    }
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    public String getName() { return name;}
+    public void setName(String name) { this.name = name; }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<Deployment> getDeployments() {
-        return deployments;
-    }
-
-    public void setDeployments(List<Deployment> deployments) {
-        this.deployments = deployments;
-    }
+    public List<Deployment> getDeployments() { return deployments; }
+    public void setDeployments(List<Deployment> deployments) { this.deployments = deployments; }
 }

@@ -12,7 +12,6 @@ import java.util.Map;
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @Produces(MediaType.APPLICATION_JSON)
 public interface KeycloakClient {
-
     @POST
     @Path("/realms/master/protocol/openid-connect/token")
     Map<String, Object> getToken(

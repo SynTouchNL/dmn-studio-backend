@@ -1,22 +1,20 @@
 package nl.syntouch.rest;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.security.Authenticated;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
-import nl.syntouch.models.DMN;
 import nl.syntouch.models.DTOs.DeploymentDTO;
 import nl.syntouch.models.Deployment;
 
 import java.util.List;
 
+@Authenticated
 @Path("/deployments")
 @ApplicationScoped
 @Produces("application/json")
 @Consumes("application/json")
 public class DeploymentResourceCustom {
-    @Authenticated
+
     @GET
     public List<DeploymentDTO> getDeployments() {
         List<Deployment> deployments = Deployment.listAll();
@@ -25,5 +23,15 @@ public class DeploymentResourceCustom {
                     return new DeploymentDTO(deployment); // Constructor should handle enrichment
                 })
                 .toList();
+    }
+
+    @Path("/{deploymentId}")
+    @GET
+    public DeploymentDTO getDeploymentById(@PathParam("deploymentId") Integer deploymentId) {
+        Deployment deployment = Deployment.find("id=?1", deploymentId).firstResult();
+        if (deployment == null) {
+            throw new NotFoundException("Deployment not found");
+        }
+        return new DeploymentDTO(deployment);
     }
 }

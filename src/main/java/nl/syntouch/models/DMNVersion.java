@@ -18,9 +18,6 @@ import java.util.Arrays;
 @Table(name = "versions")
 public class DMNVersion extends PanacheEntityBase {
 
-    //    public enum STATUS {
-//        CONCEPT, TESTING, APPROVAL, READY, ARCHIVED
-//    }
     @Id
     @ManyToOne
     @JoinColumn(name = "dmn_id", nullable = false)
@@ -52,11 +49,7 @@ public class DMNVersion extends PanacheEntityBase {
     private Instant createdDate = Instant.now();
 
     public static DMNVersion getFile(Integer id, Integer version) {
-        DMNVersion result = DMNVersion.find("dmn.id = ?1 and version = ?2", id, version).firstResult();
-        if (result == null) {
-            throw new IllegalArgumentException("No DMN version found for id " + id + " and version " + version);
-        }
-        return result;
+        return DMNVersion.find("dmn.id = ?1 and version = ?2", id, version).firstResult();
     }
 
     public Integer getId() { return dmn.getId(); }

@@ -13,7 +13,6 @@ import java.time.Instant;
 @Entity
 @IdClass(DeploymentId.class)
 public class Deployment extends PanacheEntityBase {
-    // DATA STRUCTURE
     @Id
     public Integer id;
 
@@ -25,9 +24,10 @@ public class Deployment extends PanacheEntityBase {
     })
     public DMNVersion version;
 
+    @JsonBackReference("deployments")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "environment_id", nullable = false)
-    @JsonIgnoreProperties({"deployments"})
+//    @JsonIgnoreProperties({"deployments"})
     private Environment deployedTo;
 
     @Column(name = "deployed_by", nullable = false)
@@ -37,39 +37,25 @@ public class Deployment extends PanacheEntityBase {
     @Column(name = "deployed_date", nullable = false)
     private Instant deployedTime = Instant.now();
 
+    @Column(name = "deployment_ref", nullable = false)
+    private String deploymentRef;
+
     // GETTERS & SETTERS
-    public Integer getId() {
-        return id;
-    }
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
 
-    public DMNVersion getVersion() {
-        return version;
-    }
-    public void setVersion(DMNVersion version) {
-        this.version = version;
-    }
+    public DMNVersion getVersion() { return version; }
+    public void setVersion(DMNVersion version) { this.version = version; }
 
-    public Environment getDeployedTo() {
-        return deployedTo;
-    }
-    public void setDeployedTo(Environment deployedTo) {
-        this.deployedTo = deployedTo;
-    }
+    public Environment getDeployedTo() { return deployedTo; }
+    public void setDeployedTo(Environment deployedTo) { this.deployedTo = deployedTo; }
 
-    public String getDeployedBy() {
-        return deployedBy;
-    }
-    public void setDeployedBy(String deployedBy) {
-        this.deployedBy = deployedBy;
-    }
+    public String getDeployedBy() { return deployedBy; }
+    public void setDeployedBy(String deployedBy) { this.deployedBy = deployedBy; }
 
-    public Instant getDeployedTime() {
-        return deployedTime;
-    }
-    public void setDeployedTime(Instant deployedTime) {
-        this.deployedTime = deployedTime;
-    }
+    public Instant getDeployedTime() { return deployedTime; }
+    public void setDeployedTime(Instant deployedTime) { this.deployedTime = deployedTime; }
+
+    public String getDeploymentRef() { return deploymentRef; }
+    public void setDeploymentRef(String deploymentRef) { this.deploymentRef = deploymentRef; }
 }

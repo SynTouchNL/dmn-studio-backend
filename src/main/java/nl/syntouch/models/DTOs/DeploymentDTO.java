@@ -15,6 +15,7 @@ public class DeploymentDTO {
     private Integer dmnId;
     private DMNVersion dmnVersion;
     private DMN dmnName;
+    private String deploymentRef;
 
     public DeploymentDTO(Deployment deployment) {
         this.id = deployment.getId();
@@ -24,6 +25,7 @@ public class DeploymentDTO {
         this.dmnId = deployment.getVersion().getDmn().getId();
         this.dmnVersion = deployment.getVersion();
         this.dmnName = deployment.getVersion().getDmn();
+        this.deploymentRef = deployment.getDeploymentRef();
     }
 
     public Integer getId() { return id; }
@@ -33,4 +35,5 @@ public class DeploymentDTO {
     public Integer getDmnId() { return dmnId; }
     public DMNVersion getDmnVersion() { return dmnVersion; }
     public DMN getDmn() { return dmnName; }
+    public String getDeploymentRef() { return deploymentRef; }
 }
