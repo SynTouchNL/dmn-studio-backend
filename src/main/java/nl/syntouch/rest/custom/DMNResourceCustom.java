@@ -1,4 +1,4 @@
-package nl.syntouch.rest;
+package nl.syntouch.rest.custom;
 
 import io.quarkus.security.Authenticated;
 import jakarta.enterprise.context.ApplicationScoped;

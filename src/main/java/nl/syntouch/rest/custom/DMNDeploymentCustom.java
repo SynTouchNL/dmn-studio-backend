@@ -1,7 +1,5 @@
-package nl.syntouch.rest;
+package nl.syntouch.rest.custom;
 
-import io.quarkus.security.Authenticated;
-import io.vertx.ext.web.FileUpload;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -10,7 +8,6 @@ import nl.syntouch.models.DTOs.DeployDTO;
 import nl.syntouch.models.clientresponses.DeploymentResponse;
 import nl.syntouch.models.forms.DeploymentForm;
 import nl.syntouch.services.OperatonService;
-import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 
 
 import java.io.File;

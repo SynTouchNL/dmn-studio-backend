@@ -1,13 +1,11 @@
-package nl.syntouch.rest;
+package nl.syntouch.rest.custom;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import jakarta.inject.Inject;
 import nl.syntouch.services.KeycloakService;
-import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 
 import java.util.List;
 import java.util.Map;

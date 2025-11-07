@@ -17,7 +17,6 @@ import java.util.Arrays;
 @IdClass(DMNVersionId.class)
 @Table(name = "versions")
 public class DMNVersion extends PanacheEntityBase {
-
     @Id
     @ManyToOne
     @JoinColumn(name = "dmn_id", nullable = false)
