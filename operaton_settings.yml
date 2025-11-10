@@ -1,0 +1,32 @@
+operaton.bpm:
+  process-engine-name: default
+  admin-user:
+    id: demo
+    password: demo
+  filter:
+    create: All tasks
+  run:
+    cors:
+      enabled: true
+      allowed-origins: "*"
+    rest:
+      disable-wadl: false
+    deployment:
+      deploy-changed-only: true
+    example:
+      enabled: true
+  history-cleanup-enabled: false
+  enforce-history-time-to-live: 
+  historyCleanup:
+    decisionDataCleanup:
+      enabled: false
+  default-history-time-to-live: P3M
+
+spring.datasource:
+  url: jdbc:h2:./operaton-h2-default/process-engine;TRACE_LEVEL_FILE=0;DB_CLOSE_ON_EXIT=FALSE
+  driver-class-name: org.h2.Driver
+  username: sa
+  password: sa
+
+spring.web.resources:
+  static-locations: NULL

@@ -11,7 +11,7 @@ services:
     ports:
       - "8081:8080"
     volumes:
-      - ./default.yml:/operaton/configuration/default.yml
+      - ./operaton_settings.yml:/operaton/configuration/default.yml
       - ./bpm-platform.xml:/operaton/conf/bpm-platform.xml
     depends_on:
       - postgres
