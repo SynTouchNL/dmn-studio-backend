@@ -6,9 +6,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import nl.syntouch.dmn.studio.model.DMN;
 import nl.syntouch.dmn.studio.model.DMNVersion;
-import nl.syntouch.dmn.studio.model.dto.DeployDTO;
 import nl.syntouch.dmn.studio.model.Deployment;
 import nl.syntouch.dmn.studio.model.composites.DMNVersionId;
+import nl.syntouch.dmn.studio.model.dto.DeployDTO;
 import nl.syntouch.dmn.studio.repository.DeploymentRepository;
 import nl.syntouch.dmn.studio.repository.DmnRepository;
 import nl.syntouch.dmn.studio.repository.DmnVersionRepository;
@@ -35,7 +35,7 @@ public class OperatonService {
 
     @Transactional
     public DeploymentWithDefinitionsDto createDeployment(DeployDTO deployDTO) throws IOException {
-        DMN dmn = dmnRepository.findByIdOptional(Long.valueOf(deployDTO.dmn().getId())).orElseThrow();
+        DMN dmn = dmnRepository.findByIdOptional(deployDTO.dmn().getId()).orElseThrow();
         DMNVersion dmnVersion = dmnVersionRepository.findByIdOptional(new DMNVersionId(dmn.getId(), deployDTO.version())).orElseThrow();
 
         var form = getCreateDeploymentMultipartForm(deployDTO, dmnVersion.getFileBlob());

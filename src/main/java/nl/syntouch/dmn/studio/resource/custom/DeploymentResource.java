@@ -3,8 +3,8 @@ package nl.syntouch.dmn.studio.resource.custom;
 import io.quarkus.security.Authenticated;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.*;
-import nl.syntouch.dmn.studio.model.dto.DeploymentDTO;
 import nl.syntouch.dmn.studio.model.Deployment;
+import nl.syntouch.dmn.studio.model.dto.DeploymentDTO;
 
 import java.util.List;
 
@@ -19,9 +19,7 @@ public class DeploymentResource {
     public List<DeploymentDTO> getDeployments() {
         List<Deployment> deployments = Deployment.listAll();
         return deployments.stream()
-                .map(deployment -> {
-                    return new DeploymentDTO(deployment); // Constructor should handle enrichment
-                })
+                .map(DeploymentResource::getDeploymentDTO)
                 .toList();
     }
 
@@ -32,6 +30,19 @@ public class DeploymentResource {
         if (deployment == null) {
             throw new NotFoundException("Deployment not found");
         }
-        return new DeploymentDTO(deployment);
+        return getDeploymentDTO(deployment);
+    }
+
+    private static DeploymentDTO getDeploymentDTO(Deployment deployment) {
+        return new DeploymentDTO(
+                deployment.getId(),
+                deployment.getDeployedBy(),
+                deployment.getDeployedTime(),
+                deployment.getDeployedTo().getName(),
+                deployment.getVersion().getDmn().getId(),
+                deployment.getVersion(),
+                deployment.getVersion().getDmn(),
+                deployment.getDeploymentRef()
+        );
     }
 }
