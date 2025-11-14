@@ -4,12 +4,16 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import nl.syntouch.dmn.studio.model.composites.DMNVersionId;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 
+@Getter
+@Setter
 @Entity
 @IdClass(DMNVersionId.class)
 @Table(name = "versions")
@@ -44,33 +48,8 @@ public class DMNVersion extends PanacheEntityBase {
     @Column(name = "created_date", nullable = false)
     private Instant createdDate = Instant.now();
 
-    public static DMNVersion getFile(Integer id, Integer version) {
+    //TODO: move to repository
+    public static DMNVersion getFile(Long id, Integer version) {
         return DMNVersion.find("dmn.id = ?1 and version = ?2", id, version).firstResult();
     }
-
-    public Integer getId() { return dmn.getId(); }
-
-    public Integer getVersion() { return version; }
-    public void setVersion(Integer version) { this.version = version; }
-
-    public DMN getDmn() { return dmn; }
-    public void setDmn(DMN dmn) { this.dmn = dmn; }
-
-    public Integer getStatus() { return status;}
-    public void setStatus(Integer status) { this.status = status; }
-
-    public byte[] getFileBlob() { return fileBlob; }
-    public void setFileBlob(byte[] fileBlob) { this.fileBlob = fileBlob;}
-
-    public String getModifiedBy() { return modifiedBy; }
-    public void setModifiedBy(String modifiedBy) { this.modifiedBy = modifiedBy; }
-
-    public Instant getModifiedDate() { return modifiedDate; }
-    public void setModifiedDate(Instant modifiedDate) { this.modifiedDate = modifiedDate; }
-
-    public String getCreatedBy() { return createdBy;}
-    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
-
-    public Instant getCreatedDate() { return createdDate; }
-    public void setCreatedDate(Instant createdDate) { this.createdDate = createdDate; }
 }

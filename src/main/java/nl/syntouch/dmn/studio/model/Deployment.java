@@ -3,17 +3,21 @@ package nl.syntouch.dmn.studio.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import nl.syntouch.dmn.studio.model.composites.DeploymentId;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
 
+@Getter
+@Setter
 @Table(name = "deployments")
 @Entity
 @IdClass(DeploymentId.class)
 public class Deployment extends PanacheEntityBase {
     @Id
-    public Integer id;
+    public Long id;
 
     @Id
     @ManyToOne
@@ -39,22 +43,4 @@ public class Deployment extends PanacheEntityBase {
     @Column(name = "deployment_ref", nullable = false)
     private String deploymentRef;
 
-    // GETTERS & SETTERS
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
-
-    public DMNVersion getVersion() { return version; }
-    public void setVersion(DMNVersion version) { this.version = version; }
-
-    public Environment getDeployedTo() { return deployedTo; }
-    public void setDeployedTo(Environment deployedTo) { this.deployedTo = deployedTo; }
-
-    public String getDeployedBy() { return deployedBy; }
-    public void setDeployedBy(String deployedBy) { this.deployedBy = deployedBy; }
-
-    public Instant getDeployedTime() { return deployedTime; }
-    public void setDeployedTime(Instant deployedTime) { this.deployedTime = deployedTime; }
-
-    public String getDeploymentRef() { return deploymentRef; }
-    public void setDeploymentRef(String deploymentRef) { this.deploymentRef = deploymentRef; }
 }

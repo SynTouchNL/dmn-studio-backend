@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class DeploymentId implements Serializable {
-    public Integer id;
+    public Long id;
     public DMNVersionId version;
 
     public DeploymentId() {}

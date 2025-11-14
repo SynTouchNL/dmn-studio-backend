@@ -2,62 +2,27 @@ package nl.syntouch.dmn.studio.model;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
 
+@Getter
+@Setter
 @Table(name = "comments")
 @Entity
 public class Comment extends PanacheEntityBase {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Integer id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "change_id")
-    public Change change;
+    private Change change;
 
-    public String commenter;
+    private String commenter;
 
-    public String comment;
+    private String comment;
 
-    public Instant timestamp = Instant.now();
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Change getChange() {
-        return change;
-    }
-
-    public void setChange(Change change) {
-        this.change = change;
-    }
-
-    public String getCommenter() {
-        return commenter;
-    }
-
-    public void setCommenter(String commenter) {
-        this.commenter = commenter;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public Instant getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Instant timestamp) {
-        this.timestamp = timestamp;
-    }
+    private Instant timestamp = Instant.now();
+    
 }

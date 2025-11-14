@@ -3,8 +3,11 @@ package nl.syntouch.dmn.studio.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
-
+@Getter
+@Setter
 @Table(name = "unittests")
 @Entity
 public class Test extends PanacheEntityBase {
@@ -22,37 +25,4 @@ public class Test extends PanacheEntityBase {
     public String title;
 
     public Boolean passed;
-
-
-    public String getDecisionName() {
-        return decisionName;
-    }
-
-    public void setDecisionName(String decisionName) {
-        this.decisionName = decisionName;
-    }
-
-    public DMNVersion getDmnVersion() {
-        return dmnVersion;
-    }
-
-    public void setDmnVersion(DMNVersion dmnVersion) {
-        this.dmnVersion = dmnVersion;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Boolean getPassed() {
-        return passed;
-    }
-
-    public void setPassed(Boolean passed) {
-        this.passed = passed;
-    }
 }

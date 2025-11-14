@@ -2,14 +2,18 @@ package nl.syntouch.dmn.studio.model;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Getter
+@Setter
 @Table(name = "dmns")
 @Entity
 public class DMN extends PanacheEntityBase {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(length = 45, nullable = false)
     private String name;
@@ -23,19 +27,4 @@ public class DMN extends PanacheEntityBase {
 
     @OneToMany (mappedBy = "dmn", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DMNVersion> versions;
-
-    public Integer getId() { return id;}
-    public void setId(Integer id) { this.id = id; }
-
-    public List<DMNVersion> getVersions() { return versions; }
-    public void setVersions(List<DMNVersion> versions) { this.versions = versions; }
-
-    public Domain getDomain() { return domain; }
-    public void setDomain(Domain domain) { this.domain = domain; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public String getOwner() { return owner; }
-    public void setOwner(String owner) { this.owner = owner; }
 }

@@ -6,12 +6,12 @@ import java.util.Objects;
 
 @Embeddable
 public class DMNVersionId implements Serializable {
-    private Integer dmn;
+    private Long dmn;
     private Integer version;
 
     public DMNVersionId() {}
 
-    public DMNVersionId(Integer dmn, Integer version) {
+    public DMNVersionId(Long dmn, Integer version) {
         this.dmn = dmn;
         this.version = version;
     }
