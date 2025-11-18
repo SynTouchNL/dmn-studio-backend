@@ -12,7 +12,7 @@ import lombok.Setter;
 @Entity
 public class Test extends PanacheEntityBase {
     @Id
-    public String decisionName;
+    private String decisionName;
 
     @ManyToOne
     @JoinColumns({
@@ -20,9 +20,9 @@ public class Test extends PanacheEntityBase {
             @JoinColumn(name = "version", referencedColumnName = "version")
     })
     @JsonManagedReference
-    public DMNVersion dmnVersion;
+    private DMNVersion dmnVersion;
 
-    public String title;
+    private String title;
 
-    public Boolean passed;
+    private Boolean passed;
 }

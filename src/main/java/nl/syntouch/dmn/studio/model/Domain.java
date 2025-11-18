@@ -17,9 +17,9 @@ public class Domain extends PanacheEntityBase {
     private Long id;
 
     @Column(length = 45, nullable = false)
-    public String name;
+    private String name;
 
     @OneToMany(mappedBy = "domain", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
-    public List<DMN> dmns;
+    private List<DMN> dmns;
 }

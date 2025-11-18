@@ -22,11 +22,11 @@ public class DMNVersion extends PanacheEntityBase {
     @ManyToOne
     @JoinColumn(name = "dmn_id", nullable = false)
     @JsonBackReference
-    public DMN dmn;
+    private DMN dmn;
 
     @Id
     @Column(name = "version", nullable = false)
-    public Integer version = 1;
+    private Integer version = 1;
 
     @Column(name = "status", nullable = false)
     private Integer status = 1;
@@ -53,3 +53,4 @@ public class DMNVersion extends PanacheEntityBase {
         return DMNVersion.find("dmn.id = ?1 and version = ?2", id, version).firstResult();
     }
 }
+

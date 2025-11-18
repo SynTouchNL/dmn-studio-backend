@@ -4,16 +4,13 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class DeploymentId implements Serializable {
-    public Long id;
-    public DMNVersionId version;
-
-    public DeploymentId() {}
+    private Long id;
+    private DMNVersionId version;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DeploymentId)) return false;
-        DeploymentId that = (DeploymentId) o;
+        if (!(o instanceof DeploymentId that)) return false;
         return Objects.equals(id, that.id) &&
                 Objects.equals(version, that.version);
     }

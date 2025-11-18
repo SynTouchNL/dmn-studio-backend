@@ -19,12 +19,12 @@ public class KeyValue extends PanacheEntityBase {
     @Id
     @ManyToOne
     @JsonBackReference
-    public Test test;
+    private Test test;
 
-    public String key;
+    private String key;
 
-    public String value;
+    private String value;
 
-    public String type = "string";
+    private String type = "string";
 
 }

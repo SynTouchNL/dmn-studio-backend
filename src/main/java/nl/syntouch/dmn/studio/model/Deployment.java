@@ -17,7 +17,7 @@ import java.time.Instant;
 @IdClass(DeploymentId.class)
 public class Deployment extends PanacheEntityBase {
     @Id
-    public Long id;
+    private Long id;
 
     @Id
     @ManyToOne
@@ -25,12 +25,11 @@ public class Deployment extends PanacheEntityBase {
             @JoinColumn(name = "dmn_id", referencedColumnName = "dmn_id"),
             @JoinColumn(name = "dmn_version", referencedColumnName = "version")
     })
-    public DMNVersion version;
+    private DMNVersion version;
 
     @JsonBackReference("deployments")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "environment_id", nullable = false)
-//    @JsonIgnoreProperties({"deployments"})
     private Environment deployedTo;
 
     @Column(name = "deployed_by", nullable = false)
