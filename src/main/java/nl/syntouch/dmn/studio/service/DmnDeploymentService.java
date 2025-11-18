@@ -2,7 +2,6 @@ package nl.syntouch.dmn.studio.service;
 
 import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import nl.syntouch.dmn.studio.model.DMN;

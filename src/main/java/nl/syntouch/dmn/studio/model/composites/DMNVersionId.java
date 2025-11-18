@@ -20,8 +20,7 @@ public class DMNVersionId implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DMNVersionId)) return false;
-        DMNVersionId that = (DMNVersionId) o;
+        if (!(o instanceof DMNVersionId that)) return false;
         return Objects.equals(dmn, that.dmn) &&
                 Objects.equals(version, that.version);
     }
