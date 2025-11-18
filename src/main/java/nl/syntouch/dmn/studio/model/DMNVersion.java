@@ -26,7 +26,7 @@ public class DMNVersion extends PanacheEntityBase {
 
     @Id
     @Column(name = "version", nullable = false)
-    private Integer version = 1;
+    private Long version = 1L;
 
     @Column(name = "status", nullable = false)
     private Integer status = 1;
@@ -47,10 +47,5 @@ public class DMNVersion extends PanacheEntityBase {
     @CreationTimestamp
     @Column(name = "created_date", nullable = false)
     private Instant createdDate = Instant.now();
-
-    //TODO: move to repository
-    public static DMNVersion getFile(Long id, Integer version) {
-        return DMNVersion.find("dmn.id = ?1 and version = ?2", id, version).firstResult();
-    }
 }
 

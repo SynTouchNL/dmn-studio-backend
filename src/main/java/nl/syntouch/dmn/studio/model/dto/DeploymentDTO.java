@@ -14,4 +14,5 @@ public record DeploymentDTO (
         DMNVersion dmnVersion,
         DMN dmnName,
         String deploymentRef
-) {}
+) {
+}

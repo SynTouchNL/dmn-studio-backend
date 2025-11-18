@@ -1,17 +1,18 @@
 package nl.syntouch.dmn.studio.model.composites;
 
 import jakarta.persistence.*;
+import lombok.RequiredArgsConstructor;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+@RequiredArgsConstructor
 @Embeddable
 public class DMNVersionId implements Serializable {
     private Long dmn;
-    private Integer version;
+    private Long version;
 
-    public DMNVersionId() {}
-
-    public DMNVersionId(Long dmn, Integer version) {
+    public DMNVersionId(Long dmn, Long version) {
         this.dmn = dmn;
         this.version = version;
     }

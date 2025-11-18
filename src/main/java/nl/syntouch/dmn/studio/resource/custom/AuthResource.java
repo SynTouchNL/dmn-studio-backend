@@ -4,17 +4,17 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Response;
-import jakarta.inject.Inject;
+import lombok.RequiredArgsConstructor;
 import nl.syntouch.dmn.studio.service.KeycloakService;
 
 import java.util.List;
 import java.util.Map;
 
 @Path("/auth")
+@RequiredArgsConstructor
 public class AuthResource {
 
-    @Inject
-    KeycloakService keycloakService;
+    private final KeycloakService keycloakService;
 
     @GET
     @Path("/token")

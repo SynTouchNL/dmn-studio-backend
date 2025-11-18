@@ -2,119 +2,64 @@ package nl.syntouch.dmn.studio.resource.custom;
 
 import io.quarkus.security.Authenticated;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
+import lombok.AllArgsConstructor;
 import nl.syntouch.dmn.studio.model.DMN;
 import nl.syntouch.dmn.studio.model.DMNVersion;
-import nl.syntouch.dmn.studio.model.Domain;
 import nl.syntouch.dmn.studio.model.dto.*;
+import nl.syntouch.dmn.studio.service.DmnService;
+import nl.syntouch.dmn.studio.service.DmnVersionService;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URI;
 
 @Authenticated
 @Path("/dmns")
 @ApplicationScoped
+@AllArgsConstructor
 @Produces("application/json")
 @Consumes("application/json")
 public class DmnResource {
+
+    private final DmnService dmnService;
+    private final DmnVersionService dmnVersionService;
+
     @POST
-    @Transactional
-    public DMN createDMN(DMNCreateDTO dmnDTO) {
-        DMN dmn = new DMN();
-        dmn.setName(dmnDTO.name());
-        dmn.setOwner(dmnDTO.owner());
-        Domain domain = Domain.findById(dmnDTO.domainId());
-
-        if (domain == null) {
-            throw new NotFoundException("Domain not found");
-        }
-
-        dmn.setDomain(domain);
-        List<DMNVersion> versions = new ArrayList<>();
-        DMNVersion version = new DMNVersion();
-        version.setDmn(dmn);
-        version.setFileBlob(dmnDTO.fileBlob()); // Add fileBlob to DMNCreateDTO
-        version.setCreatedBy("Mark Akkermans"); //TODO managed by Keycloak
-        versions.add(version);
-        dmn.setVersions(versions);
-        dmn.persist();
-        return dmn;
+    public Response createDMN(DMNCreateDTO dmnDTO) {
+        DMN createdDmn = dmnService.createDmn(dmnDTO);
+        return Response.created(URI.create("/dmns/" + createdDmn.getId()))
+                .entity(createdDmn)
+                .build();
     }
 
     @Path("/{dmnId}/")
     @POST
-    @Transactional
-    public DMNVersion addVersion(@PathParam("dmnId") Integer dmnId, DMNVersionCreateDTO versionDTO) {
-        DMN dmn = DMN.find("id", dmnId).firstResult();
-
-        if (dmn == null) {
-            throw new NotFoundException("DMN not found");
-        }
-
-        Integer nextVersion = ((Number) DMNVersion.getEntityManager()
-                .createQuery("select max(v.version) from DMNVersion v where v.dmn.id = :dmnId")
-                .setParameter("dmnId", dmnId)
-                .getSingleResult()) == null ? 1 :
-                ((Number) DMNVersion.getEntityManager()
-                        .createQuery("select max(v.version) from DMNVersion v where v.dmn.id = :dmnId")
-                        .setParameter("dmnId", dmnId)
-                        .getSingleResult()).intValue() + 1;
-
-        DMNVersion version = new DMNVersion();
-        version.setVersion(nextVersion);
-        version.setDmn(dmn);
-        version.setFileBlob(versionDTO.fileBlob());
-        version.setCreatedBy(versionDTO.createdBy());
-        version.persist();
-        return version;
+    public Response addVersion(@PathParam("dmnId") Long dmnId, DMNVersionCreateDTO versionDTO) {
+        DMNVersion dmnVersion = dmnVersionService.addVersion(dmnId, versionDTO);
+        return Response.created(URI.create("/dmns/%s/%s".formatted(dmnId, dmnVersion.getVersion())))
+                .entity(dmnVersion)
+                .build();
     }
 
     @Path("/{dmnId}/{version}/")
     @PUT
-    @Transactional
-    public Response updateVersion(@PathParam("dmnId") Integer dmnId, @PathParam("version") Integer versionId, DMNVersionUpdateDTO versionDTO) {
-        DMNVersion dmn = DMNVersion.find("dmn.id = ?1 and version = ?2", dmnId, versionId).firstResult();
-
-        if (dmn == null) {
-            throw new NotFoundException("DMN not found");
-        }
-
-        if (dmn.getStatus() >= 4) {
-            throw new BadRequestException("Cannot update a DMN version that is production or archived.");
-        }
-
-        dmn.setStatus(versionDTO.status());
-        dmn.setModifiedBy(versionDTO.modifiedBy());
-        dmn.persist();
-        return Response.status(Response.Status.OK).entity(dmn).build();
+    public Response updateVersion(@PathParam("dmnId") Long dmnId, @PathParam("version") Long versionId, DMNVersionUpdateDTO versionDTO) {
+        dmnVersionService.updateVersion(dmnId, versionId, versionDTO);
+        return Response.noContent().build();
     }
 
     @Path("/{dmnId}/{versionId}/file")
     @GET
-    public DMNVersionDTO getFile(@PathParam("dmnId") Long dmnId, @PathParam("versionId") Integer versionId) {
-        DMNVersion entity = DMNVersion.getFile(dmnId, versionId);
-
-        if (entity == null) {
-            throw new NotFoundException("DMN version not found for dmnId " + dmnId + " and versionId " + versionId);
-        }
-
-        return new DMNVersionDTO(entity.getDmn().getId(), entity.getVersion(), entity.getFileBlob(), entity.getStatus());
+    public Response getFile(@PathParam("dmnId") Long dmnId, @PathParam("versionId") Long versionId) {
+        DMNVersion dmnVersion =  dmnVersionService.getDmnVersion(dmnId, versionId);
+        DMNVersionDTO dto = new DMNVersionDTO(dmnVersion.getDmn().getId(), dmnVersion.getVersion(), dmnVersion.getFileBlob(), dmnVersion.getStatus());
+        return Response.ok(dto).build();
     }
 
     @Path("/{dmnId}/{versionId}/file")
     @PUT
-    @Transactional
-    public DMNUpdateFileDTO updateFile(@PathParam("dmnId") Long dmnId, @PathParam("versionId") Integer versionId, DMNUpdateFileDTO versionDTO) {
-        DMNVersion entity = DMNVersion.getFile(dmnId, versionId);
-
-        if (entity == null) {
-            throw new NotFoundException("DMN version not found for dmnId " + dmnId + " and versionId " + versionId);
-        }
-
-        entity.setFileBlob(versionDTO.fileBlob());
-        entity.setModifiedBy(versionDTO.updatedBy());
-        return new DMNUpdateFileDTO(entity.getFileBlob(), entity.getModifiedBy());
+    public Response updateFile(@PathParam("dmnId") Long dmnId, @PathParam("versionId") Long versionId, DMNUpdateFileDTO versionDTO) {
+        dmnVersionService.updateFile(dmnId, versionId, versionDTO);
+        return Response.noContent().build();
     }
 }

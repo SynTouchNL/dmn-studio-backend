@@ -6,7 +6,7 @@ import java.time.OffsetDateTime;
 
 public record DeployDTO (
     DMN dmn,
-    Integer version,
+    Long version,
     Environment environment,
     String tenantId,
     String deploymentSource,

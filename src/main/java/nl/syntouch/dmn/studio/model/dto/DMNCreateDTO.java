@@ -3,7 +3,7 @@ package nl.syntouch.dmn.studio.model.dto;
 public record DMNCreateDTO(
         String name,
         String owner,
-        Integer domainId,
+        Long domainId,
         byte[] fileBlob,
         String createdBy
 ) {}

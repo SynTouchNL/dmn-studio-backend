@@ -2,6 +2,7 @@ package nl.syntouch.dmn.studio.service;
 
 import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import nl.syntouch.dmn.studio.model.DMN;
@@ -21,9 +22,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+@Transactional
 @RequiredArgsConstructor
 @ApplicationScoped
-public class OperatonService {
+public class DmnDeploymentService {
 
     @RestClient
     DeploymentApi deploymentApi;

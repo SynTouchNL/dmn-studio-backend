@@ -11,11 +11,9 @@ import java.util.Map;
 @ApplicationScoped
 public class KeycloakService {
 
-    @Inject
     @ConfigProperty(name = "quarkus.oidc.credentials.secret")
     String serviceSecret;
 
-    @Inject
     @RestClient
     KeycloakClient keycloakClient;
 
