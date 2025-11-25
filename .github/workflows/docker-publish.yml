@@ -86,6 +86,7 @@ jobs:
       - name: Extract metadata (tags, labels)
         id: meta
         run: |
+          echo "REPO=${GITHUB_REPOSITORY@L}" >> $GITHUB_OUTPUT
           if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
             VERSION=${GITHUB_REF#refs/tags/v}
             echo "IMAGE_TAG=${VERSION}-native" >> $GITHUB_OUTPUT
@@ -118,7 +119,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ github.repository_owner }}/dmn-studio-backend:${{ steps.meta.outputs.IMAGE_TAG }}
+            ${{ env.REGISTRY }}/${{ steps.meta.outputs.REPO }}/dmn-studio-backend:${{ steps.meta.outputs.IMAGE_TAG }}
           labels: |
             org.opencontainers.image.source=${{ github.repositoryUrl }}
             org.opencontainers.image.revision=${{ github.sha }}
