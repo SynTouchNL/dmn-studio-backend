@@ -58,7 +58,7 @@ public class DmnDeploymentService {
         return deployment;
     }
 
-    private static DeploymentApi.CreateDeploymentMultipartForm getCreateDeploymentMultipartForm(DeployDTO deployDTO, byte[] data) throws IOException {
+    static DeploymentApi.CreateDeploymentMultipartForm getCreateDeploymentMultipartForm(DeployDTO deployDTO, byte[] data) throws IOException {
         var form = new DeploymentApi.CreateDeploymentMultipartForm();
         form.tenantId = deployDTO.tenantId();
         form.deploymentSource = deployDTO.deploymentSource();
