@@ -60,6 +60,6 @@ public class DmnResource {
     @PUT
     public Response updateFile(@PathParam("dmnId") Long dmnId, @PathParam("versionId") Long versionId, DMNUpdateFileDTO versionDTO) {
         dmnVersionService.updateFile(dmnId, versionId, versionDTO);
-        return Response.noContent().build();
+        return Response.ok(versionDTO).build();
     }
 }
