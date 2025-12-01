@@ -194,4 +194,14 @@ public class UnitTestService {
     public Response getTests(Long dmnId, Long version) {
         return Response.ok(unittestRepository.find("dmnVersion.dmn.id = ?1 AND dmnVersion.version = ?2", dmnId, version).list()).build();
     }
+
+    public Response deleteTest(Long dmnId, Long version, Long testId) {
+        Test test = unittestRepository.find("id = ?1 AND dmnVersion.dmn.id = ?2 AND dmnVersion.version = ?3", testId, dmnId, version).firstResult();
+        if (test != null) {
+            unittestRepository.delete(test);
+            return Response.noContent().build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
 }

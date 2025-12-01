@@ -31,4 +31,10 @@ public class TestDeploymentResource {
     public Response getTests(@PathParam("dmnId") Long dmnId, @PathParam("version") Long version) {
         return unitTestService.getTests(dmnId, version);
     }
+
+    @DELETE
+    @Path("/{dmnId}/{version}/{testId}")
+    public Response deleteTests(@PathParam("dmnId") Long dmnId, @PathParam("version") Long version, @PathParam("testId") Long testId) {
+        return unitTestService.deleteTest(dmnId, version, testId);
+    }
 }
