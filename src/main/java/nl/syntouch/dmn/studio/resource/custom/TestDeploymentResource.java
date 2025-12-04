@@ -20,15 +20,21 @@ public class TestDeploymentResource {
 
     private final UnitTestService unitTestService;
 
-
     @POST
     public Response deployTestDeployment(DeployTestDTO deployTestDTO) throws IOException {
-        return unitTestService.handleTestDeployment(deployTestDTO);
+        return Response.ok(unitTestService.handleTestDeployment(deployTestDTO)).build();
     }
 
     @GET
-    @Path("/{dmnId}/{version}")
+    @Path("/{dmnId}/{version}/tests")
     public Response getTests(@PathParam("dmnId") Long dmnId, @PathParam("version") Long version) {
-        return unitTestService.getTests(dmnId, version);
+        return Response.ok(unitTestService.getTests(dmnId, version)).build();
+    }
+
+    @DELETE
+    @Path("/{dmnId}/{version}/tests/{testId}")
+    public Response deleteTests(@PathParam("dmnId") Long dmnId, @PathParam("version") Long version, @PathParam("testId") Long testId) {
+        unitTestService.deleteTest(dmnId, version, testId);
+        return Response.noContent().build();
     }
 }
