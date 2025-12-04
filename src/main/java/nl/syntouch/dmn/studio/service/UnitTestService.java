@@ -47,11 +47,11 @@ public class UnitTestService {
     @ConfigProperty(name = "quarkus.rest-client.operaton_rest_api_json.url")
     String operatonURL;
 
-    public Response handleTestDeployment(DeployTestDTO deployTestDTO) throws IOException {
+    public UnittestResultDTO handleTestDeployment(DeployTestDTO deployTestDTO) throws IOException {
         DeploymentWithDefinitionsDto deploymentWithDefinitionsDto = createTestDeployment(deployTestDTO);
         UnittestResultDTO result = callTestDeployment(deploymentWithDefinitionsDto, deployTestDTO);
         deleteTestDeployment(deployTestDTO, deploymentWithDefinitionsDto.getId()); // https://github.com/awaitility/awaitility
-        return Response.ok(result).build();
+        return result;
     }
 
     public DeploymentWithDefinitionsDto createTestDeployment(DeployTestDTO deployTestDTO) throws IOException {
@@ -191,17 +191,15 @@ public class UnitTestService {
         }
     }
 
-    public Response getTests(Long dmnId, Long version) {
-        return Response.ok(unittestRepository.find("dmnVersion.dmn.id = ?1 AND dmnVersion.version = ?2", dmnId, version).list()).build();
+    public List<Test> getTests(Long dmnId, Long version) {
+        return unittestRepository.find("dmnVersion.dmn.id = ?1 AND dmnVersion.version = ?2", dmnId, version).list();
     }
 
-    public Response deleteTest(Long dmnId, Long version, Long testId) {
-        Test test = unittestRepository.find("id = ?1 AND dmnVersion.dmn.id = ?2 AND dmnVersion.version = ?3", testId, dmnId, version).firstResult();
+    public void deleteTest(Long dmnId, Long version, Long testId) {
+        Test test = unittestRepository.findTest(testId, dmnId, version);
         if (test != null) {
             unittestRepository.delete(test);
-            return Response.noContent().build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return;
         }
     }
 }
