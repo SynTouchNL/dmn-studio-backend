@@ -1,7 +1,7 @@
 services:
   keycloakweb:
     image: quay.io/keycloak/keycloak:26.3.4
-    command: start-dev
+    command: start-dev --import-realm
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres-keycloak:5432/keycloak
@@ -23,6 +23,8 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
     ports:
       - "127.0.0.1:8181:8181"
+    volumes:
+      - ./keycloak/imports:/opt/keycloak/data/import
     depends_on:
       - postgres-keycloak
 
@@ -39,20 +41,21 @@ services:
       - postgres-keycloak-data:/var/lib/postgresql/data
     restart: always
 
-  postgres-dmn-tool:
+  postgres-dmn-studio:
     image: postgres:15
-    container_name: postgres-dmn-tool
+    container_name: postgres-dmn-studio
     environment:
-      - POSTGRES_DB=dmn-tool
+      - POSTGRES_DB=dmn-studio
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgrespassword
     ports:
       - "5434:5432"
     volumes:
-        - postgres-dmn-tool-data:/var/lib/postgresql/data
+        - ./postgres:/docker-entrypoint-initdb.d
+        - postgres-dmn-studio-data:/var/lib/postgresql/data
 
 volumes:
   postgres-keycloak-data:
     driver: local
-  postgres-dmn-tool-data:
+  postgres-dmn-studio-data:
     driver: local
