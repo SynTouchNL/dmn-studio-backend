@@ -35,20 +35,6 @@ public class DmnVersionService {
         return version;
     }
 
-    public DMNVersion updateVersion(Long dmnId, Long versionId, DMNVersionUpdateDTO versionDTO) {
-        DMNVersion dmnVersion = dmnVersionRepository.findByIdOptional(new DMNVersionId(dmnId, versionId)).orElseThrow(() -> new NotFoundException("DMN Version not found"));
-
-        if (dmnVersion.getStatus() >= 4) {
-            throw new BadRequestException("Cannot update a DMN version that is production or archived.");
-        }
-
-        dmnVersion.setStatus(versionDTO.status());
-        dmnVersion.setModifiedBy(versionDTO.modifiedBy());
-        dmnVersion.persist();
-
-        return dmnVersion;
-    }
-
     public DMNVersion getDmnVersion(Long dmnId, Long versionId) {
         return dmnVersionRepository.findByIdOptional(new DMNVersionId(dmnId, versionId)).orElseThrow(() -> new NotFoundException("DMN Version not found"));
     }

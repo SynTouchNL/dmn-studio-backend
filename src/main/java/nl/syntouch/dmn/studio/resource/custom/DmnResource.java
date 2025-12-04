@@ -41,13 +41,6 @@ public class DmnResource {
                 .build();
     }
 
-    @Path("/{dmnId}/{version}/")
-    @PUT
-    public Response updateVersion(@PathParam("dmnId") Long dmnId, @PathParam("version") Long versionId, DMNVersionUpdateDTO versionDTO) {
-        dmnVersionService.updateVersion(dmnId, versionId, versionDTO);
-        return Response.noContent().build();
-    }
-
     @Path("/{dmnId}/{versionId}/file")
     @GET
     public Response getFile(@PathParam("dmnId") Long dmnId, @PathParam("versionId") Long versionId) {

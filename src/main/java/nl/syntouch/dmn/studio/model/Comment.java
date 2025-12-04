@@ -1,5 +1,6 @@
 package nl.syntouch.dmn.studio.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -17,6 +18,7 @@ public class Comment extends PanacheEntityBase {
 
     @ManyToOne
     @JoinColumn(name = "change_id")
+    @JsonBackReference
     private Change change;
 
     private String commenter;
