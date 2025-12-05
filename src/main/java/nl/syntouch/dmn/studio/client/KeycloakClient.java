@@ -21,20 +21,20 @@ public interface KeycloakClient {
     );
 
     @GET
-    @Path("/admin/realms/dmn_tool/users")
+    @Path("/admin/realms/dmn_studio/users")
     List<Map<String, Object>> getUsers(
             @HeaderParam("Authorization") String authorization
     );
 
     @GET
-    @Path("/admin/realms/dmn_tool/groups/{groupId}/members")
+    @Path("/admin/realms/dmn_studio/groups/{groupId}/members")
     List<Map<String, Object>> getGroupUsers(
             @PathParam("groupId") String groupId,
             @HeaderParam("Authorization") String authorization
     );
 
     @GET
-    @Path("/admin/realms/dmn_tool/users/{userId}/role-mappings/realm")
+    @Path("/admin/realms/dmn_studio/users/{userId}/role-mappings/realm")
     List<Map<String,Object>> getUserRealmRoles(
             @PathParam("userId") String userId,
             @HeaderParam("Authorization") String bearerToken

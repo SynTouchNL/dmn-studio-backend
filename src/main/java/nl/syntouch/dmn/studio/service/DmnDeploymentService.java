@@ -44,7 +44,6 @@ public class DmnDeploymentService {
 
         Deployment deployment = getDeployment(deployDTO, dmnVersion, deploymentWithDefinitionsDto);
         deploymentRepository.persist(deployment);
-
         return deploymentWithDefinitionsDto;
     }
 
@@ -78,7 +77,6 @@ public class DmnDeploymentService {
 
     public DeploymentDto getDeployment(String deploymentId) {
         return deploymentApi.getDeployment(deploymentId);
-
     }
 
     public void deleteDeployment(String deploymentId, boolean cascade) {
