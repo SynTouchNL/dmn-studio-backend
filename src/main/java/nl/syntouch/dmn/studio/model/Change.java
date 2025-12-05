@@ -40,7 +40,4 @@ public class Change extends PanacheEntityBase {
     @Column(name = "timestamp", nullable = false)
     private Instant submittedAt = Instant.now();
 
-    @OneToMany (mappedBy = "change", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments;
-
 }

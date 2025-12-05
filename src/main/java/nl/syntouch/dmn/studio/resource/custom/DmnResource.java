@@ -12,6 +12,7 @@ import nl.syntouch.dmn.studio.service.DmnService;
 import nl.syntouch.dmn.studio.service.DmnVersionService;
 
 import java.net.URI;
+import java.util.List;
 
 @Authenticated
 @Path("/dmns")
@@ -30,6 +31,12 @@ public class DmnResource {
         return Response.created(URI.create("/dmns/" + createdDmn.getId()))
                 .entity(createdDmn)
                 .build();
+    }
+
+    @GET
+    public Response getDMNs() {
+        List<DMN> dmns = dmnService.getDMNs();
+        return Response.ok(dmns).build();
     }
 
     @Path("/{dmnId}/")

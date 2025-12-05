@@ -32,28 +32,16 @@ public class LifecycleService {
         return changeRepository.find(
                 "select c from Change c " +
                         "join fetch c.version v " +
-                        "left join fetch c.comments " +
                         "where v.dmn.id = ?1 and v.version = ?2 and c.approved = false",
                 dmnId, versionNumber
         ).firstResult();
-    }
-
-    public List<Comment> getComments(Long dmnId, Long versionNumber) {
-        DMNVersion dmnVersion = dmnVersionRepository.find("dmn.id = ?1 and version = ?2", dmnId, versionNumber).firstResult();
-        if (dmnVersion == null) {
-            return List.of();
-        }
-        return commentRepository.find(
-                "change.version.dmn.id = ?1 and change.version.version = ?2",
-                dmnId,
-                versionNumber
-        ).list();
     }
 
     public Change handleSubmission(Long dmnId, Long version, SubmissionDTO submissionDTO) {
         DMNVersion dmnVersion = dmnVersionRepository.find("dmn.id = ?1 and version = ?2", dmnId, version).firstResult();
         Change newChange = createChange(submissionDTO, dmnVersion);
         dmnVersion.setStatus(3); // Set status to "Under Review"
+        dmnVersion.setModifiedBy(identity.getPrincipal().getName());
         dmnVersion.persist();
         return newChange;
     }
@@ -100,16 +88,6 @@ public class LifecycleService {
         change.persist();
         return change;
     }
-
-    private Comment createComment(ReviewDTO reviewDTO, Change change) {
-        Comment comment = new Comment();
-        comment.setChange(change);
-        comment.setComment(reviewDTO.comment());
-        comment.setCommenter(identity.getPrincipal().getName());
-        comment.persist();
-        return comment;
-    }
-
     private Change modifyChange(ReviewDTO reviewDTO, Long changeId) {
         Change reviewedChange = changeRepository.find("id = ?1", changeId).firstResult();
         reviewedChange.setApproved(reviewDTO.approved());

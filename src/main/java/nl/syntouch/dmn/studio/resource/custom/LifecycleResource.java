@@ -27,12 +27,6 @@ public class LifecycleResource {
         return Response.ok(lifecycleService.getPendingReview(dmnId, version)).build();
     }
 
-    @GET
-    @Path("/{dmnId}/{version}/comments")
-    public Response getComments(@PathParam("dmnId") Long dmnId, @PathParam("version") Long version) {
-        return Response.ok(lifecycleService.getComments(dmnId, version)).build();
-    }
-
     @POST
     @Path("/{dmnId}/{version}/submit")
     public Response submitForReview(@PathParam("dmnId") Long dmnId, @PathParam("version") Long version, SubmissionDTO submissionDTO) { // TODO: define proper DTO\
@@ -43,7 +37,7 @@ public class LifecycleResource {
         }
     }
 
-    @PUT
+    @DELETE
     @Path("/{dmnId}/{version}/{changeId}/cancel")
     public Response cancelSubmission(@PathParam("dmnId") Long dmnId, @PathParam("version") Long version, @PathParam("changeId") Long changeId) {
         lifecycleService.cancelSubmission(dmnId, version, changeId);

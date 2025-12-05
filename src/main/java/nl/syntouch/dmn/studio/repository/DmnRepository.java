@@ -6,5 +6,4 @@ import nl.syntouch.dmn.studio.model.DMN;
 
 @ApplicationScoped
 public class DmnRepository implements PanacheRepository<DMN> {
-
 }

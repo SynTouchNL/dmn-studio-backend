@@ -6,9 +6,9 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import nl.syntouch.dmn.studio.service.KeycloakService;
+import org.keycloak.representations.idm.UserRepresentation;
 
 import java.util.List;
-import java.util.Map;
 
 @Path("/auth")
 @RequiredArgsConstructor
@@ -17,27 +17,30 @@ public class AuthResource {
     private final KeycloakService keycloakService;
 
     @GET
-    @Path("/token")
-    public Response getToken() {
-        var tokenResponse = keycloakService.fetchToken();
-        return Response.ok(tokenResponse).build();
+    @Path("/{role}/users")
+    public Response getUsersByRole(@PathParam("role") String role) {
+        List<UserRepresentation> users = keycloakService.getUsersByRole(role);
+        return Response.ok(users).build();
     }
 
     @GET
     @Path("/users")
-    public Response getUsers() {
-        var tokenResponse = keycloakService.fetchToken();
-        String accessToken = (String) tokenResponse.get("access_token");
-        List<Map<String, Object>> usersResponse = keycloakService.fetchUsers(accessToken);
-        return Response.ok(usersResponse).build();
+    public Response getAllUsers() {
+        List<UserRepresentation> users = keycloakService.getUsers();
+        return Response.ok(users).build();
     }
 
     @GET
-    @Path("/group-users/{groupId}")
-    public Response getGroupUsers(@PathParam("groupId") String groupId) {
+    @Path("/user/{username}")
+    public Response getUserByUsername(@PathParam("username") String username) {
+        UserRepresentation user = keycloakService.getUserByUsername(username);
+        return Response.ok(user).build();
+    }
+
+    @GET
+    @Path("/token")
+    public Response getToken() {
         var tokenResponse = keycloakService.fetchToken();
-        String accessToken = (String) tokenResponse.get("access_token");
-        List<Map<String, Object>> groupUsersResponse = keycloakService.fetchGroupUsers(groupId, accessToken);
-        return Response.ok(groupUsersResponse).build();
+        return Response.ok(tokenResponse).build();
     }
 }

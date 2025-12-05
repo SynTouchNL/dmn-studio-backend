@@ -18,7 +18,6 @@ public class Comment extends PanacheEntityBase {
 
     @ManyToOne
     @JoinColumn(name = "change_id")
-    @JsonBackReference
     private Change change;
 
     private String commenter;

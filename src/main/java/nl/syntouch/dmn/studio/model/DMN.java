@@ -1,5 +1,6 @@
 package nl.syntouch.dmn.studio.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -21,10 +22,10 @@ public class DMN extends PanacheEntityBase {
     @Column(length = 45, nullable = false)
     private String owner;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "domain_id", nullable = false)
     private Domain domain;
 
-    @OneToMany (mappedBy = "dmn", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany (mappedBy = "dmn", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DMNVersion> versions;
 }
