@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import nl.syntouch.dmn.studio.model.*;
@@ -195,11 +196,7 @@ public class UnitTestService {
         return unittestRepository.find("dmnVersion.dmn.id = ?1 AND dmnVersion.version = ?2", dmnId, version).list();
     }
 
-    public void deleteTest(Long dmnId, Long version, Long testId) {
-        Test test = unittestRepository.findTest(testId, dmnId, version);
-        if (test != null) {
-            unittestRepository.delete(test);
-            return;
-        }
+    public void deleteTest(Long dmnId, Long version, Long testId) throws NotFoundException {
+            unittestRepository.delete(unittestRepository.findTest(testId, dmnId, version));
     }
 }

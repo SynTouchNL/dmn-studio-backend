@@ -12,6 +12,7 @@ import nl.syntouch.dmn.studio.service.DmnService;
 import nl.syntouch.dmn.studio.service.DmnVersionService;
 
 import java.net.URI;
+import java.util.List;
 
 @Authenticated
 @Path("/dmns")
@@ -32,6 +33,12 @@ public class DmnResource {
                 .build();
     }
 
+    @GET
+    public Response getDMNs() {
+        List<DMN> dmns = dmnService.getDMNs();
+        return Response.ok(dmns).build();
+    }
+
     @Path("/{dmnId}/")
     @POST
     public Response addVersion(@PathParam("dmnId") Long dmnId, DMNVersionCreateDTO versionDTO) {
@@ -39,13 +46,6 @@ public class DmnResource {
         return Response.created(URI.create("/dmns/%s/%s".formatted(dmnId, dmnVersion.getVersion())))
                 .entity(dmnVersion)
                 .build();
-    }
-
-    @Path("/{dmnId}/{version}/")
-    @PUT
-    public Response updateVersion(@PathParam("dmnId") Long dmnId, @PathParam("version") Long versionId, DMNVersionUpdateDTO versionDTO) {
-        dmnVersionService.updateVersion(dmnId, versionId, versionDTO);
-        return Response.noContent().build();
     }
 
     @Path("/{dmnId}/{versionId}/file")

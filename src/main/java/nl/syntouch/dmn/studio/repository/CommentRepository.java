@@ -1,9 +1,9 @@
 package nl.syntouch.dmn.studio.repository;
-
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import nl.syntouch.dmn.studio.model.DMN;
+import nl.syntouch.dmn.studio.model.Comment;
 
 @ApplicationScoped
-public class DmnRepository implements PanacheRepository<DMN> {
+public class CommentRepository implements PanacheRepository<Comment> {
+
 }

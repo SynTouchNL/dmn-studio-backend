@@ -1,11 +1,13 @@
 package nl.syntouch.dmn.studio.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,6 +22,7 @@ public class Change extends PanacheEntityBase {
             @JoinColumn(name = "dmn_id", referencedColumnName = "dmn_id"),
             @JoinColumn(name = "version", referencedColumnName = "version")
     })
+    @JsonBackReference
     private DMNVersion version;
 
     @Column(name = "description", nullable = false)
@@ -31,8 +34,8 @@ public class Change extends PanacheEntityBase {
     @Column(name = "assigned_to")
     private String assignedTo;
 
-    @Column(name = "approved")
-    private Boolean approved;
+    @Column(name = "approved", nullable = false)
+    private Boolean approved = false;
 
     @Column(name = "timestamp", nullable = false)
     private Instant submittedAt = Instant.now();
