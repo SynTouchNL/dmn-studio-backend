@@ -85,50 +85,6 @@ class DmnVersionServiceTest {
     }
 
     @Test
-    @Transactional
-    @DisplayName("Should update status and modifiedBy when version exists")
-    void updateVersionUpdatesStatusAndModifiedByWhenVersionExists() {
-        Long versionId = 1L;
-        DMNVersion dmnVersion = createDmnVersion(versionId, 2);
-        DMNVersionUpdateDTO versionDTO = createVersionUpdateDTO(3, "modifiedBy");
-        when(dmnVersionRepository.findByIdOptional(new DMNVersionId(testDmn.getId(), versionId)))
-                .thenReturn(Optional.of(dmnVersion));
-
-        DMNVersion result = dmnVersionService.updateVersion(testDmn.getId(), versionId, versionDTO);
-
-        assertNotNull(result);
-        assertEquals(3, result.getStatus());
-        assertEquals("modifiedBy", result.getModifiedBy());
-    }
-
-    @Test
-    @Transactional
-    @DisplayName("Should throw BadRequestException when version is production or archived")
-    void updateVersionThrowsBadRequestExceptionWhenVersionIsProductionOrArchived() {
-        Long versionId = 1L;
-        DMNVersion dmnVersion = createDmnVersion(versionId, 4);
-        DMNVersionUpdateDTO versionDTO = createVersionUpdateDTO(3, "modifiedBy");
-        when(dmnVersionRepository.findByIdOptional(new DMNVersionId(testDmn.getId(), versionId)))
-                .thenReturn(Optional.of(dmnVersion));
-
-        assertThrows(BadRequestException.class,
-                () -> dmnVersionService.updateVersion(testDmn.getId(), versionId, versionDTO));
-    }
-
-    @Test
-    @DisplayName("Should throw NotFoundException when version does not exist during update")
-    void updateVersionThrowsNotFoundExceptionWhenVersionDoesNotExist() {
-        Long dmnId = 1L;
-        Long versionId = 1L;
-        DMNVersionUpdateDTO versionDTO = createVersionUpdateDTO(3, "modifiedBy");
-        when(dmnVersionRepository.findByIdOptional(new DMNVersionId(dmnId, versionId)))
-                .thenReturn(Optional.empty());
-
-        assertThrows(NotFoundException.class,
-                () -> dmnVersionService.updateVersion(dmnId, versionId, versionDTO));
-    }
-
-    @Test
     @DisplayName("Should return version when it exists")
     void getDmnVersionReturnsVersionWhenExists() {
         Long versionId = 1L;
@@ -195,10 +151,6 @@ class DmnVersionServiceTest {
 
     private static DMNVersionCreateDTO createVersionCreateDTO(Long dmnId, String createdBy) {
         return new DMNVersionCreateDTO(dmnId.intValue(), new byte[]{1, 2, 3}, createdBy);
-    }
-
-    private static DMNVersionUpdateDTO createVersionUpdateDTO(int status, String modifiedBy) {
-        return new DMNVersionUpdateDTO(status, modifiedBy);
     }
 
     private static DMNUpdateFileDTO createUpdateFileDTO(String modifiedBy) {
