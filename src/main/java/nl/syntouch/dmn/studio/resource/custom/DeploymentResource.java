@@ -5,6 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.*;
 import nl.syntouch.dmn.studio.model.Deployment;
 import nl.syntouch.dmn.studio.model.dto.DeploymentDTO;
+import nl.syntouch.dmn.studio.service.DmnDeploymentService;
 
 import java.util.List;
 
@@ -15,34 +16,29 @@ import java.util.List;
 @Consumes("application/json")
 public class DeploymentResource {
 
+    static DmnDeploymentService dmnDeploymentService;
+
     @GET
     public List<DeploymentDTO> getDeployments() {
         List<Deployment> deployments = Deployment.listAll();
         return deployments.stream()
-                .map(DeploymentResource::getDeploymentDTO)
+                .map(dmnDeploymentService::getDeploymentDTO)
                 .toList();
     }
 
-    @Path("/{deploymentId}")
     @GET
+    @Path("/{deploymentId}")
     public DeploymentDTO getDeploymentById(@PathParam("deploymentId") Integer deploymentId) {
-        Deployment deployment = Deployment.find("id=?1", deploymentId).firstResult();
-        if (deployment == null) {
-            throw new NotFoundException("Deployment not found");
-        }
-        return getDeploymentDTO(deployment);
+        return dmnDeploymentService.getDeploymentDTO(Deployment.find("id=?1", deploymentId).firstResult());
     }
 
-    private static DeploymentDTO getDeploymentDTO(Deployment deployment) {
-        return new DeploymentDTO(
-                deployment.getId(),
-                deployment.getDeployedBy(),
-                deployment.getDeployedTime(),
-                deployment.getDeployedTo().getName(),
-                deployment.getVersion().getDmn().getId(),
-                deployment.getVersion(),
-                deployment.getVersion().getDmn(),
-                deployment.getDeploymentRef()
-        );
+    @GET
+    @Path("/{dmnId}/{versionId}/{envId}")
+    public Long getDeploymentVersionInProduction(@PathParam("dmnId") Long dmnId, @PathParam("versionId") Long versionId, @PathParam("envId") Long envId) {
+        Deployment foundDeployment = Deployment.find("deployedTo.id = ?1 and version.dmn.id = ?2 and version.version = ?3", envId, dmnId, versionId).firstResult();
+        if (foundDeployment == null) {
+            return 0L;
+        }
+            return foundDeployment.getVersion().getVersion();
     }
 }

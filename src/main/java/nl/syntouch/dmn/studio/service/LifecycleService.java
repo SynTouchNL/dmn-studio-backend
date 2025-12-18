@@ -39,8 +39,11 @@ public class LifecycleService {
 
     public Change handleSubmission(Long dmnId, Long version, SubmissionDTO submissionDTO) {
         DMNVersion dmnVersion = dmnVersionRepository.find("dmn.id = ?1 and version = ?2", dmnId, version).firstResult();
+        if (dmnVersion.getStatus() >= 4L) {
+            throw new IllegalStateException("Cannot submit a version that is already approved or archived.");
+        }
         Change newChange = createChange(submissionDTO, dmnVersion);
-        dmnVersion.setStatus(3); // Set status to "Under Review"
+        dmnVersion.setStatus(3L); // Set status to "Under Review"
         dmnVersion.setModifiedBy(identity.getPrincipal().getName());
         dmnVersion.persist();
         return newChange;
@@ -52,11 +55,10 @@ public class LifecycleService {
         if (dmnVersion != null) {
             if(change != null){
                 change.delete();
-                dmnVersion.setStatus(1); // Set status back to Draft
+                dmnVersion.setStatus(1L); // Set status back to Draft
                 dmnVersion.persist();
             }
         }
-        return;
     }
 
     public Change handleReview(Long dmnId, Long version, Long changeId, ReviewDTO reviewDTO) throws EntityNotFoundException {
@@ -65,13 +67,13 @@ public class LifecycleService {
             DMNVersion approvedVersion = dmnVersionRepository.find("dmn.id = ?1 and version = ?2", dmnId, version).firstResult();
             DMNVersion previousVersion = dmnVersionRepository.find("dmn.id = ?1 and status = 4 and version != ?2", dmnId, version).firstResult();
             if(approvedVersion != null){
-                approvedVersion.setStatus(4); // Approved
+                approvedVersion.setStatus(4L); // Approved
                 approvedVersion.persist();
             } else {
                 throw new EntityNotFoundException("Approved version does not exist.");
             }
             if(previousVersion != null){
-                previousVersion.setStatus(5); // Archived
+                previousVersion.setStatus(5L); // Archived
                 previousVersion.persist();
             }
         }

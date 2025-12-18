@@ -3,6 +3,7 @@ package nl.syntouch.dmn.studio.service;
 import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import nl.syntouch.dmn.studio.model.DMN;
 import nl.syntouch.dmn.studio.model.DMNVersion;
@@ -10,6 +11,7 @@ import nl.syntouch.dmn.studio.model.Deployment;
 import nl.syntouch.dmn.studio.model.composites.DMNVersionId;
 import nl.syntouch.dmn.studio.model.dto.DeployDTO;
 import nl.syntouch.dmn.studio.model.dto.DeploymentDMNDTO;
+import nl.syntouch.dmn.studio.model.dto.DeploymentDTO;
 import nl.syntouch.dmn.studio.repository.DeploymentRepository;
 import nl.syntouch.dmn.studio.repository.DmnRepository;
 import nl.syntouch.dmn.studio.repository.DmnVersionRepository;
@@ -22,6 +24,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Transactional
 @RequiredArgsConstructor
@@ -86,7 +90,8 @@ public class DmnDeploymentService {
     }
 
     public DeploymentDMNDTO getDeploymentWithDMN(Long deploymentId) {
-        Deployment foundDeployment = Deployment.find("id = ?1", deploymentId).firstResult();
+        Optional<Deployment> foundDeploymentOpt = Deployment.find("id = ?1", deploymentId).firstResultOptional();
+        Deployment foundDeployment = foundDeploymentOpt.orElseThrow(() -> new NotFoundException("Deployment not found"));
         DMN foundDmn = foundDeployment.getVersion().getDmn();
 
         DeploymentDMNDTO.DMNVersionSubDTO subDTO = new DeploymentDMNDTO.DMNVersionSubDTO(
@@ -132,5 +137,19 @@ public class DmnDeploymentService {
                     subDTO,
                     dmn);
         }).toList();
+    }
+
+    public DeploymentDTO getDeploymentDTO(Deployment deployment) {
+        Objects.requireNonNull(deployment, "deployment is null");
+        return new DeploymentDTO(
+                deployment.getId(),
+                deployment.getDeployedBy(),
+                deployment.getDeployedTime(),
+                deployment.getDeployedTo() != null ? deployment.getDeployedTo().getName() : null,
+                deployment.getVersion() != null && deployment.getVersion().getDmn() != null ? deployment.getVersion().getDmn().getId() : null,
+                deployment.getVersion(),
+                deployment.getVersion() != null ? deployment.getVersion().getDmn() : null,
+                deployment.getDeploymentRef()
+        );
     }
 }
