@@ -33,7 +33,7 @@ public class Deployment extends PanacheEntityBase {
     private Environment deployedTo;
 
     @Column(name = "deployed_by", nullable = false)
-    private String deployedBy; //TODO Later connect to user?
+    private String deployedBy;
 
     @CreationTimestamp
     @Column(name = "deployed_date", nullable = false)

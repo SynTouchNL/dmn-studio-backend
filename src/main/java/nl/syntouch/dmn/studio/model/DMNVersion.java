@@ -29,7 +29,7 @@ public class DMNVersion extends PanacheEntityBase {
     private Long version = 1L;
 
     @Column(name = "status", nullable = false)
-    private Integer status = 1;
+    private Long status = 1L;
 
     //@Lob //@Basic(fetch = FetchType.LAZY) // TODO revisit use of @Lob, because it causes Long error.
     @Column(name = "file_blob", nullable = false, columnDefinition = "BYTEA")

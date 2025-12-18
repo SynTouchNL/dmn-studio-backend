@@ -197,6 +197,7 @@ public class UnitTestService {
     }
 
     public void deleteTest(Long dmnId, Long version, Long testId) throws NotFoundException {
-            unittestRepository.delete(unittestRepository.findTest(testId, dmnId, version));
+        Test deletableTest = unittestRepository.find("dmnVersion.dmn.id = ?1 AND dmnVersion.version = ?2 AND id = ?3", dmnId, version, testId).firstResult();
+        unittestRepository.delete(deletableTest);
     }
 }
