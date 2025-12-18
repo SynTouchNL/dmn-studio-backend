@@ -88,7 +88,7 @@ class DmnVersionServiceTest {
     @DisplayName("Should return version when it exists")
     void getDmnVersionReturnsVersionWhenExists() {
         Long versionId = 1L;
-        DMNVersion dmnVersion = createDmnVersion(versionId, 2);
+        DMNVersion dmnVersion = createDmnVersion(versionId, 2L);
         when(dmnVersionRepository.findByIdOptional(new DMNVersionId(testDmn.getId(), versionId)))
                 .thenReturn(Optional.of(dmnVersion));
 
@@ -115,7 +115,7 @@ class DmnVersionServiceTest {
     @DisplayName("Should update file blob and modifiedBy when version exists")
     void updateFileUpdatesFileBlobAndModifiedByWhenVersionExists() {
         Long versionId = 1L;
-        DMNVersion dmnVersion = createDmnVersion(versionId, 2);
+        DMNVersion dmnVersion = createDmnVersion(versionId, 2L);
         DMNUpdateFileDTO versionDTO = createUpdateFileDTO("modifiedBy");
         when(dmnVersionRepository.findByIdOptional(new DMNVersionId(testDmn.getId(), versionId)))
                 .thenReturn(Optional.of(dmnVersion));
@@ -139,7 +139,7 @@ class DmnVersionServiceTest {
                 () -> dmnVersionService.updateFile(dmnId, versionId, versionDTO));
     }
 
-    private DMNVersion createDmnVersion(Long versionId, int status) {
+    private DMNVersion createDmnVersion(Long versionId, Long status) {
         DMNVersion dmnVersion = new DMNVersion();
         dmnVersion.setDmn(testDmn);
         dmnVersion.setVersion(versionId);
