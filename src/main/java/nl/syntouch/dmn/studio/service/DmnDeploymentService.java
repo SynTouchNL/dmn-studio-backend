@@ -9,6 +9,7 @@ import nl.syntouch.dmn.studio.model.DMNVersion;
 import nl.syntouch.dmn.studio.model.Deployment;
 import nl.syntouch.dmn.studio.model.composites.DMNVersionId;
 import nl.syntouch.dmn.studio.model.dto.DeployDTO;
+import nl.syntouch.dmn.studio.model.dto.DeploymentDMNDTO;
 import nl.syntouch.dmn.studio.repository.DeploymentRepository;
 import nl.syntouch.dmn.studio.repository.DmnRepository;
 import nl.syntouch.dmn.studio.repository.DmnVersionRepository;
@@ -20,6 +21,7 @@ import org.openapi.quarkus.operaton_rest_api_json.model.DeploymentWithDefinition
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
 
 @Transactional
 @RequiredArgsConstructor
@@ -81,5 +83,54 @@ public class DmnDeploymentService {
 
     public void deleteDeployment(String deploymentId, boolean cascade) {
         deploymentApi.deleteDeployment(deploymentId, cascade, true, true);
+    }
+
+    public DeploymentDMNDTO getDeploymentWithDMN(Long deploymentId) {
+        Deployment foundDeployment = Deployment.find("id = ?1", deploymentId).firstResult();
+        DMN foundDmn = foundDeployment.getVersion().getDmn();
+
+        DeploymentDMNDTO.DMNVersionSubDTO subDTO = new DeploymentDMNDTO.DMNVersionSubDTO(
+                foundDeployment.getVersion().getVersion(),
+                foundDeployment.getVersion().getStatus(),
+                foundDeployment.getVersion().getModifiedBy(),
+                foundDeployment.getVersion().getModifiedDate(),
+                foundDeployment.getVersion().getCreatedBy(),
+                foundDeployment.getVersion().getCreatedDate()
+        );
+        return new DeploymentDMNDTO(
+                foundDeployment.getId(),
+                foundDmn.getId(),
+                foundDeployment.getDeployedBy(),
+                foundDeployment.getDeployedTime(),
+                foundDeployment.getDeployedTo().getId(),
+                foundDeployment.getDeployedTo().getName(),
+                foundDeployment.getDeploymentRef(),
+                subDTO,
+                foundDmn);
+    }
+
+    public List<DeploymentDMNDTO> getDeploymentsWithDMN() {
+        List<Deployment> deployments = Deployment.listAll();
+        return deployments.stream().map(deployment -> {
+            DMN dmn = deployment.getVersion().getDmn();
+            DeploymentDMNDTO.DMNVersionSubDTO subDTO = new DeploymentDMNDTO.DMNVersionSubDTO(
+                    deployment.getVersion().getVersion(),
+                    deployment.getVersion().getStatus(),
+                    deployment.getVersion().getModifiedBy(),
+                    deployment.getVersion().getModifiedDate(),
+                    deployment.getVersion().getCreatedBy(),
+                    deployment.getVersion().getCreatedDate()
+            );
+            return new DeploymentDMNDTO(
+                    deployment.getId(),
+                    dmn.getId(),
+                    deployment.getDeployedBy(),
+                    deployment.getDeployedTime(),
+                    deployment.getDeployedTo().getId(),
+                    deployment.getDeployedTo().getName(),
+                    deployment.getDeploymentRef(),
+                    subDTO,
+                    dmn);
+        }).toList();
     }
 }

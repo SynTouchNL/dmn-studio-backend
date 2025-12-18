@@ -33,10 +33,18 @@ public class DmnDeploymentResource {
     }
 
     @GET
-    @Path("/info/{deploymentId}")
-    public Response getDeployment(@PathParam("deploymentId") String deploymentId) {
+    @Path("/{deploymentId}")
+    public Response getDeployment(@PathParam("deploymentId") Long deploymentId) {
         return Response
-                .ok(dmnDeploymentService.getDeployment(deploymentId))
+                .ok(dmnDeploymentService.getDeploymentWithDMN(deploymentId))
+                .build();
+    }
+
+    @GET
+    @Path("/")
+    public Response getAllDeployments() {
+        return Response
+                .ok(dmnDeploymentService.getDeploymentsWithDMN())
                 .build();
     }
 
