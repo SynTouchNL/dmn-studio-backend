@@ -4,6 +4,6 @@ public record DMNVersionDTO(
         Long id,
         Long version,
         byte[] fileBlob,
-        Integer status
+        Long status
 ) {
 }
