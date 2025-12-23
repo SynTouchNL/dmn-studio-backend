@@ -17,9 +17,13 @@ import java.util.Map;
 @ApplicationScoped
 public class KeycloakService {
     Keycloak keycloak;
-    String serverUrl = "http://localhost:8181";
-    String realm = "dmn_studio";
 
+    @ConfigProperty(name = "quarkus.rest.client.keycloak-api.url")
+    String serverUrl;
+
+    @ConfigProperty(name = "quarkus.rest.client.keycloak-api.realm")
+    String realm;
+    
     @ConfigProperty(name = "quarkus.oidc.client-id")
     String clientId;
 
