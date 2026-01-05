@@ -1,6 +1,6 @@
 package nl.syntouch.dmn.studio.resource.custom;
 
-import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
@@ -13,12 +13,14 @@ import org.openapi.quarkus.operaton_rest_api_json.model.DeploymentWithDefinition
 import java.io.IOException;
 import java.net.URI;
 
+import static nl.syntouch.dmn.studio.DmnStudioConstants.ROLE_DEPLOYER;
+
 @Path("/deploy")
-@Authenticated
 @ApplicationScoped
 @AllArgsConstructor
 @Produces("application/json")
 @Consumes("application/json")
+@RolesAllowed(ROLE_DEPLOYER)
 public class DmnDeploymentResource {
 
     private final DmnDeploymentService dmnDeploymentService;

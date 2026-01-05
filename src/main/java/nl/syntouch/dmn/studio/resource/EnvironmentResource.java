@@ -1,9 +1,11 @@
 package nl.syntouch.dmn.studio.resource;
 
 import io.quarkus.hibernate.orm.rest.data.panache.PanacheEntityResource;
-import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.RolesAllowed;
 import nl.syntouch.dmn.studio.model.Environment;
 
-@Authenticated
+import static nl.syntouch.dmn.studio.DmnStudioConstants.ROLE_DEPLOYER;
+
+@RolesAllowed(ROLE_DEPLOYER)
 public interface EnvironmentResource extends PanacheEntityResource<Environment, Integer> {
 }
