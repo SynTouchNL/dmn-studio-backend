@@ -2,6 +2,7 @@ package nl.syntouch.dmn.studio.resource.custom;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import nl.syntouch.dmn.studio.model.Deployment;
 import nl.syntouch.dmn.studio.model.dto.DeploymentDTO;
@@ -17,7 +18,8 @@ import static nl.syntouch.dmn.studio.DmnStudioConstants.*;
 @Consumes("application/json")
 public class DeploymentResource {
 
-    static DmnDeploymentService dmnDeploymentService;
+    @Inject
+    DmnDeploymentService dmnDeploymentService;
 
     @GET
     @RolesAllowed({ROLE_DEPLOYER, ROLE_DEVELOPER})
