@@ -60,7 +60,7 @@
       },
       {
         "id": "ab9251ae-5efa-4ee5-b8fa-670d636875c5",
-        "name": "developer",
+        "name": "dmnstudio_developer",
         "description": "",
         "composite": false,
         "clientRole": false,
@@ -69,7 +69,16 @@
       },
       {
         "id": "7a8c824a-eef6-4902-9010-098ed784d5f9",
-        "name": "editor",
+        "name": "dmnstudio_editor",
+        "description": "",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "1e9d3831-9772-490c-bd35-5951c0dc8f12",
+        "attributes": {}
+      },
+      {
+        "id": "f8e7cfc6-22c0-4011-965c-35779ac1e335",
+        "name": "dmnstudio_approver",
         "description": "",
         "composite": false,
         "clientRole": false,
@@ -534,7 +543,7 @@
       } ],
       "disableableCredentialTypes" : [ ],
       "requiredActions" : [ ],
-      "realmRoles" : [ "developer", "editor", "default-roles-dmn_studio" ],
+      "realmRoles" : [ "dmnstudio_developer", "dmnstudio_editor", "default-roles-dmn_studio" ],
       "notBefore" : 0,
       "groups" : [ ]
     }
