@@ -11,7 +11,6 @@ import nl.syntouch.dmn.studio.model.Domain;
 import nl.syntouch.dmn.studio.model.dto.DMNCreateDTO;
 import nl.syntouch.dmn.studio.repository.DmnRepository;
 import nl.syntouch.dmn.studio.repository.DomainRepository;
-import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.UserRepresentation;
 
 import java.util.Collections;

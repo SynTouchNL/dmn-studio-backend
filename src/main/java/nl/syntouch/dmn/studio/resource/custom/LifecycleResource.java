@@ -21,14 +21,14 @@ public class LifecycleResource {
 
     @GET
     @Path("/{dmnId}/{version}/review")
-    @RolesAllowed({ROLE_DEVELOPER, ROLE_APPROVER, ROLE_DEPLOYER})
+    @RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_APPROVER, ROLE_DEPLOYER})
     public Response getPendingReview(@PathParam("dmnId") Long dmnId, @PathParam("version") Long version) {
         return Response.ok(lifecycleService.getPendingReview(dmnId, version)).build();
     }
 
     @POST
     @Path("/{dmnId}/{version}/submit")
-    @RolesAllowed({ROLE_DEVELOPER, ROLE_DEPLOYER})
+    @RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_DEPLOYER})
     public Response submitForReview(@PathParam("dmnId") Long dmnId, @PathParam("version") Long version, SubmissionDTO submissionDTO) { // TODO: define proper DTO\
         if (lifecycleService.getPendingReview(dmnId, version) == null) {
             return Response.ok(lifecycleService.handleSubmission(dmnId, version, submissionDTO)).build();
@@ -39,7 +39,7 @@ public class LifecycleResource {
 
     @DELETE
     @Path("/{dmnId}/{version}/{changeId}/cancel")
-    @RolesAllowed({ROLE_DEVELOPER, ROLE_DEPLOYER})
+    @RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_DEPLOYER})
     public Response cancelSubmission(@PathParam("dmnId") Long dmnId, @PathParam("version") Long version, @PathParam("changeId") Long changeId) {
         lifecycleService.cancelSubmission(dmnId, version, changeId);
         return Response.noContent().build();
@@ -47,7 +47,7 @@ public class LifecycleResource {
 
     @POST
     @Path("/{dmnId}/{version}/{changeId}/review")
-    @RolesAllowed(ROLE_APPROVER)
+    @RolesAllowed({ROLE_ADMIN, ROLE_APPROVER})
     public Response reviewComplete(@PathParam("dmnId") Long dmnId, @PathParam("version") Long version, @PathParam("changeId") Long changeId, ReviewDTO reviewDTO) { // TODO: define proper DTO
         return Response.ok(lifecycleService.handleReview(dmnId, version, changeId, reviewDTO)).build();
     }

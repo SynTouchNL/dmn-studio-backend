@@ -9,7 +9,6 @@ import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import nl.syntouch.dmn.studio.model.*;
 import nl.syntouch.dmn.studio.model.composites.DMNVersionId;
@@ -18,6 +17,7 @@ import nl.syntouch.dmn.studio.model.dto.DeployTestDTO;
 import nl.syntouch.dmn.studio.model.dto.UnittestResultDTO;
 import nl.syntouch.dmn.studio.repository.UnittestRepository;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.openapi.quarkus.operaton_rest_api_json.api.DeploymentApi;
 import org.openapi.quarkus.operaton_rest_api_json.model.DeploymentWithDefinitionsDto;
@@ -39,14 +39,14 @@ public class UnitTestService {
     @RestClient
     DeploymentApi deploymentApi;
 
+    @ConfigProperty(name = "quarkus.rest-client.operaton_rest_api_ut.url")
+    String unitTestUrl;
+
     private final SecurityIdentity identity;
     private final DmnRepository dmnRepository;
     private final DmnVersionRepository dmnVersionRepository;
     private final UnittestRepository unittestRepository;
     private static final ObjectMapper objectMapper = new ObjectMapper();
-
-    @ConfigProperty(name = "quarkus.rest-client.operaton_rest_api_json.url")
-    String operatonURL;
 
     public UnittestResultDTO handleTestDeployment(DeployTestDTO deployTestDTO) throws IOException {
         DeploymentWithDefinitionsDto deploymentWithDefinitionsDto = createTestDeployment(deployTestDTO);
@@ -74,7 +74,8 @@ public class UnitTestService {
         );
 
         var form = DmnDeploymentService.getCreateDeploymentMultipartForm(deploymentData, dmnVersion.getFileBlob());
-        DeploymentWithDefinitionsDto deploymentWithDefinitionsDto = deploymentApi.createDeployment(form);
+        DeploymentApi unitTestClient = RestClientBuilder.newBuilder().baseUri(unitTestUrl + "/engine-rest").build(DeploymentApi.class);
+        DeploymentWithDefinitionsDto deploymentWithDefinitionsDto = unitTestClient.createDeployment(form);
         Test unitTest = getTest(deployTestDTO, dmnVersion);
         unittestRepository.persist(unitTest);
 
@@ -127,10 +128,10 @@ public class UnitTestService {
         try {
             String jsonInput = buildJSON(deployTestDTO.inputData());
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(operatonURL + "/decision-definition/" + decisionDefinitionId + "/evaluate"))
-                .POST(HttpRequest.BodyPublishers.ofString(jsonInput))
-                .header("Content-Type", "application/json")
-                .build();
+                    .uri(URI.create(unitTestUrl + "/engine-rest/decision-definition/" + decisionDefinitionId + "/evaluate"))
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonInput))
+                    .header("Content-Type", "application/json")
+                    .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             String responseBody = response.body();
@@ -145,8 +146,8 @@ public class UnitTestService {
             return new UnittestResultDTO(passed, buildOutputJSON(deployTestDTO.outputData()), responseBody);
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
-    }
+         }
+     }
 
     private String buildJSON(List<DeployTestDTO.ParamDTO> inputData) throws JsonProcessingException {
         Map<String, Object> variables = inputData.stream()
@@ -186,7 +187,8 @@ public class UnitTestService {
 
     public void deleteTestDeployment(DeployTestDTO deployTestDTO, String deploymentId) {
         try {
-            deploymentApi.deleteDeployment(deploymentId, true, true, true);
+            DeploymentApi unitTestClient = RestClientBuilder.newBuilder().baseUri(unitTestUrl + "/engine-rest").build(DeploymentApi.class);
+            unitTestClient.deleteDeployment(deploymentId, true, true, true);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

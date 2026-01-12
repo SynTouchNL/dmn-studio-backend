@@ -1,6 +1,5 @@
 package nl.syntouch.dmn.studio.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 import lombok.Getter;

@@ -6,6 +6,6 @@ import nl.syntouch.dmn.studio.model.Test;
 
 import static nl.syntouch.dmn.studio.DmnStudioConstants.*;
 
-@RolesAllowed({ROLE_DEVELOPER, ROLE_DEPLOYER})
+@RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_DEPLOYER})
 public interface TestResource extends PanacheEntityResource<Test, Integer> {
 }

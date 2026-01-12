@@ -2,9 +2,7 @@ package nl.syntouch.dmn.studio.service;
 import io.vertx.ext.auth.User;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import nl.syntouch.dmn.studio.client.KeycloakClient;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
@@ -12,7 +10,6 @@ import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.representations.idm.UserRepresentation;
 
 import java.util.List;
-import java.util.Map;
 
 @ApplicationScoped
 public class KeycloakService {

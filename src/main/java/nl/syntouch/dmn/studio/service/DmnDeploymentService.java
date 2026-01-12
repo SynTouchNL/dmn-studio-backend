@@ -15,9 +15,10 @@ import nl.syntouch.dmn.studio.model.dto.DeploymentDTO;
 import nl.syntouch.dmn.studio.repository.DeploymentRepository;
 import nl.syntouch.dmn.studio.repository.DmnRepository;
 import nl.syntouch.dmn.studio.repository.DmnVersionRepository;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.openapi.quarkus.operaton_rest_api_json.api.DeploymentApi;
-import org.openapi.quarkus.operaton_rest_api_json.model.DeploymentDto;
 import org.openapi.quarkus.operaton_rest_api_json.model.DeploymentWithDefinitionsDto;
 
 import java.io.File;
@@ -35,25 +36,56 @@ public class DmnDeploymentService {
     @RestClient
     DeploymentApi deploymentApi;
 
+    @ConfigProperty(name = "quarkus.rest-client.operaton_rest_api_test.url")
+    String testUrl;
+
+    @ConfigProperty(name = "quarkus.rest-client.operaton_rest_api_acc.url")
+    String accUrl;
+
+    @ConfigProperty(name = "quarkus.rest-client.operaton_rest_api_prod.url")
+    String prodUrl;
+
     private final SecurityIdentity identity;
     private final DmnRepository dmnRepository;
     private final DmnVersionRepository dmnVersionRepository;
     private final DeploymentRepository deploymentRepository;
 
+    private String selectUrl(Long envId) {
+        String envUrl = "";
+        if (envId == 1L) {
+            envUrl = testUrl;
+        } else if (envId == 2L) {
+            envUrl = accUrl;
+        } else if (envId == 3L) {
+            envUrl = prodUrl;
+        } else {
+            throw new NotFoundException("Environment not found");
+        }
+        return envUrl + "/engine-rest";
+    }
+
     @Transactional
     public DeploymentWithDefinitionsDto createDeployment(DeployDTO deployDTO) throws IOException {
+        DeploymentApi customClient = RestClientBuilder.newBuilder()
+                .baseUri(selectUrl(deployDTO.environment().getId()))
+                .build(DeploymentApi.class);
+
         DMN dmn = dmnRepository.findByIdOptional(deployDTO.dmn().getId()).orElseThrow();
         DMNVersion dmnVersion = dmnVersionRepository.findByIdOptional(new DMNVersionId(dmn.getId(), deployDTO.version())).orElseThrow();
 
         var form = getCreateDeploymentMultipartForm(deployDTO, dmnVersion.getFileBlob());
-        DeploymentWithDefinitionsDto deploymentWithDefinitionsDto = deploymentApi.createDeployment(form);
 
-        Deployment deployment = getDeployment(deployDTO, dmnVersion, deploymentWithDefinitionsDto);
-        deploymentRepository.persist(deployment);
-        return deploymentWithDefinitionsDto;
+        try {
+            DeploymentWithDefinitionsDto deploymentWithDefinitionsDto = customClient.createDeployment(form);
+            Deployment deployment = getDeployment(deployDTO, dmnVersion, deploymentWithDefinitionsDto);
+            deploymentRepository.persist(deployment);
+            return deploymentWithDefinitionsDto;
+        } catch (Exception e) {
+            throw new IOException("Kan DMN niet deployen: " + e.getMessage());
+        }
     }
 
-    private Deployment getDeployment(DeployDTO deployDTO, DMNVersion dmnVersion, DeploymentWithDefinitionsDto deploymentWithDefinitionsDto) {
+    public Deployment getDeployment(DeployDTO deployDTO, DMNVersion dmnVersion, DeploymentWithDefinitionsDto deploymentWithDefinitionsDto) {
         Deployment deployment = new Deployment();
         deployment.setId(deployDTO.dmn().getId());
         deployment.setVersion(dmnVersion);
@@ -81,12 +113,23 @@ public class DmnDeploymentService {
         return tempFile;
     }
 
-    public DeploymentDto getDeployment(String deploymentId) {
-        return deploymentApi.getDeployment(deploymentId);
-    }
+    public void deleteDeployment(Long deploymentId, Long envId) throws NotFoundException {
+        Deployment deploymentFound = deploymentRepository.find("id = ?1", deploymentId).firstResult();
+        if (deploymentFound == null) {
+            throw new NotFoundException("Deployment not found in local database");
+        }
+        String deploymentRef = deploymentFound.getDeploymentRef();
 
-    public void deleteDeployment(String deploymentId, boolean cascade) {
-        deploymentApi.deleteDeployment(deploymentId, cascade, true, true);
+        DeploymentApi customClient = RestClientBuilder.newBuilder()
+                .baseUri(selectUrl(envId))
+                .build(DeploymentApi.class);
+        try {
+            customClient.deleteDeployment(deploymentRef, true, true, true);
+
+        } catch (Exception e) {
+            throw new NotFoundException("Deployment not found in target environment");
+        }
+        deploymentRepository.delete(deploymentFound);
     }
 
     public DeploymentDMNDTO getDeploymentWithDMN(Long deploymentId) {
