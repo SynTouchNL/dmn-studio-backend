@@ -8,20 +8,13 @@ import jakarta.transaction.Transactional;
 import nl.syntouch.dmn.studio.model.*;
 import nl.syntouch.dmn.studio.model.composites.DMNVersionId;
 import nl.syntouch.dmn.studio.model.dto.DeployDTO;
-import nl.syntouch.dmn.studio.repository.DeploymentRepository;
 import nl.syntouch.dmn.studio.repository.DmnRepository;
 import nl.syntouch.dmn.studio.repository.DmnVersionRepository;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openapi.quarkus.operaton_rest_api_json.api.DeploymentApi;
-import org.openapi.quarkus.operaton_rest_api_json.model.DeploymentDto;
-import org.openapi.quarkus.operaton_rest_api_json.model.DeploymentWithDefinitionsDto;
 
-import java.io.IOException;
 import java.security.Principal;
-import java.time.OffsetDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -37,13 +30,6 @@ class DmnDeploymentServiceTest {
 
     @InjectMock
     DmnVersionRepository dmnVersionRepository;
-
-    @InjectMock
-    DeploymentRepository deploymentRepository;
-
-    @InjectMock
-    @RestClient
-    DeploymentApi deploymentApi;
 
     @InjectMock
     SecurityIdentity securityIdentity;
@@ -76,37 +62,6 @@ class DmnDeploymentServiceTest {
         when(securityIdentity.getPrincipal()).thenReturn(mockPrincipal);
     }
 
-    @Test
-    @Transactional
-    @DisplayName("Should create deployment when valid data is provided")
-    void createsDeploymentWhenValidDataProvided() throws IOException {
-        Long versionId = 1L;
-        DeployDTO deployDTO = createDefaultDeployDTO(testDmn, versionId);
-        DMNVersion dmnVersion = createDmnVersion(versionId);
-        DeploymentWithDefinitionsDto deploymentResponse = createDeploymentResponse("deploymentRef");
-
-        when(dmnRepository.findByIdOptional(testDmn.getId())).thenReturn(Optional.of(testDmn));
-        when(dmnVersionRepository.findByIdOptional(new DMNVersionId(testDmn.getId(), versionId)))
-                .thenReturn(Optional.of(dmnVersion));
-        when(deploymentApi.createDeployment(any())).thenReturn(deploymentResponse);
-
-        DeploymentWithDefinitionsDto result = dmnDeploymentService.createDeployment(deployDTO);
-
-        assertNotNull(result);
-        assertEquals("deploymentRef", result.getId());
-        verify(deploymentRepository).persist(any(Deployment.class));
-    }
-
-    @Test
-    @DisplayName("Should throw NoSuchElementException when DMN does not exist")
-    void throwsExceptionWhenDmnDoesNotExist() {
-        DMN nonExistentDmn = createNonExistentDmn();
-        DeployDTO deployDTO = createDefaultDeployDTO(nonExistentDmn, 1L);
-
-        when(dmnRepository.findByIdOptional(nonExistentDmn.getId())).thenReturn(Optional.empty());
-
-        assertThrows(NoSuchElementException.class, () -> dmnDeploymentService.createDeployment(deployDTO));
-    }
 
     @Test
     @DisplayName("Should throw NoSuchElementException when DMN version does not exist")
@@ -122,61 +77,29 @@ class DmnDeploymentServiceTest {
     }
 
     @Test
-    @DisplayName("Should get deployment when valid ID is provided")
-    void getsDeploymentWhenValidIdProvided() {
-        String deploymentId = "deploymentRef";
-        DeploymentDto deploymentDto = createDeploymentDto(deploymentId, "Test Deployment");
-
-        when(deploymentApi.getDeployment(deploymentId)).thenReturn(deploymentDto);
-
-        DeploymentDto result = dmnDeploymentService.getDeployment(deploymentId);
-
-        assertNotNull(result);
-        assertEquals(deploymentId, result.getId());
-        assertEquals("Test Deployment", result.getName());
-        verify(deploymentApi).getDeployment(deploymentId);
-    }
-
-    @Test
-    @DisplayName("Should delete deployment with cascade when cascade is true")
-    void deletesDeploymentWithCascadeTrue() {
-        String deploymentId = "deploymentRef";
-        dmnDeploymentService.deleteDeployment(deploymentId, true);
-        verify(deploymentApi).deleteDeployment(deploymentId, true, true, true);
-    }
-
-    @Test
-    @DisplayName("Should delete deployment without cascade when cascade is false")
-    void deletesDeploymentWithCascadeFalse() {
-        String deploymentId = "deploymentRef";
-        dmnDeploymentService.deleteDeployment(deploymentId, false);
-        verify(deploymentApi).deleteDeployment(deploymentId, false, true, true);
-    }
-
-    @Test
     @Transactional
-    @DisplayName("Should set deployment properties correctly when creating deployment")
-    void setsDeploymentPropertiesCorrectlyWhenCreating() throws IOException {
+    @DisplayName("Should get deployment with DMN when valid ID is provided")
+    void getsDeploymentWithDmnWhenValidIdProvided() {
+        Long deploymentId = 1L;
         Long versionId = 1L;
-        String newDeploymentRef = "newDeploymentRef";
-        DeployDTO deployDTO = createCustomDeployDTO(testDmn, versionId);
+
         DMNVersion dmnVersion = createDmnVersion(versionId);
-        DeploymentWithDefinitionsDto deploymentResponse = createDeploymentResponse(newDeploymentRef);
+        dmnVersion.persist();
 
-        when(dmnRepository.findByIdOptional(testDmn.getId())).thenReturn(Optional.of(testDmn));
-        when(dmnVersionRepository.findByIdOptional(new DMNVersionId(testDmn.getId(), versionId)))
-                .thenReturn(Optional.of(dmnVersion));
-        when(deploymentApi.createDeployment(any())).thenReturn(deploymentResponse);
+        Deployment deployment = new Deployment();
+        deployment.setId(deploymentId);
+        deployment.setVersion(dmnVersion);
+        deployment.setDeployedTo(testEnvironment);
+        deployment.setDeployedBy("testUser");
+        deployment.setDeploymentRef("deploymentRef");
+        deployment.persist();
 
-        DeploymentWithDefinitionsDto result = dmnDeploymentService.createDeployment(deployDTO);
+        var result = dmnDeploymentService.getDeploymentWithDMN(deploymentId);
 
         assertNotNull(result);
-        assertEquals(newDeploymentRef, result.getId());
-        verify(deploymentRepository).persist(argThat((Deployment deployment) ->
-                deployment.getDeploymentRef().equals(newDeploymentRef) &&
-                deployment.getDeployedBy().equals("testUser") &&
-                deployment.getDeployedTo().equals(testEnvironment)
-        ));
+        assertEquals(deploymentId, result.deploymentId());
+        assertEquals(testDmn.getId(), result.dmnId());
+        assertEquals("testUser", result.deployedBy());
     }
 
     private DMNVersion createDmnVersion(Long version) {
@@ -188,52 +111,22 @@ class DmnDeploymentServiceTest {
         return dmnVersion;
     }
 
-    private static DMN createNonExistentDmn() {
-        DMN dmn = new DMN();
-        dmn.setId(999L);
-        return dmn;
-    }
-
     private DeployDTO createDefaultDeployDTO(DMN dmn, Long version) {
+        Environment mockEnv = new Environment();
+        mockEnv.setId(1L);
+        mockEnv.setName("Test Environment");
+
         return new DeployDTO(
                 dmn,
                 version,
-                testEnvironment,
+                mockEnv,
                 "tenantId",
                 "source",
                 true,
                 true,
                 "deploymentName",
-                OffsetDateTime.now(),
+                null,
                 "data"
         );
-    }
-
-    private DeployDTO createCustomDeployDTO(DMN dmn, Long version) {
-        return new DeployDTO(
-                dmn,
-                version,
-                testEnvironment,
-                "tenantId",
-                "source",
-                false,
-                false,
-                "customDeploymentName",
-                OffsetDateTime.now(),
-                "customData"
-        );
-    }
-
-    private static DeploymentWithDefinitionsDto createDeploymentResponse(String deploymentId) {
-        DeploymentWithDefinitionsDto dto = new DeploymentWithDefinitionsDto();
-        dto.setId(deploymentId);
-        return dto;
-    }
-
-    private static DeploymentDto createDeploymentDto(String id, String name) {
-        DeploymentDto dto = new DeploymentDto();
-        dto.setId(id);
-        dto.setName(name);
-        return dto;
     }
 }
