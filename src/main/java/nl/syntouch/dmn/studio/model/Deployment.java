@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 import nl.syntouch.dmn.studio.model.composites.DeploymentId;
 import org.hibernate.annotations.CreationTimestamp;
-
 import java.time.Instant;
 
 @Getter

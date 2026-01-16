@@ -6,6 +6,6 @@ import io.quarkus.hibernate.orm.rest.data.panache.PanacheEntityResource;
 
 import static nl.syntouch.dmn.studio.DmnStudioConstants.*;
 
-@RolesAllowed({ROLE_DEVELOPER, ROLE_APPROVER, ROLE_DEPLOYER})
+@RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_APPROVER, ROLE_DEPLOYER})
 public interface DMNResource extends PanacheEntityResource<DMN, Integer> {
 }

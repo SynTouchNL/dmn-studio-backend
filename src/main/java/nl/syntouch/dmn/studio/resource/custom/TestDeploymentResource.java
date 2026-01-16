@@ -7,7 +7,6 @@ import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
 import nl.syntouch.dmn.studio.model.dto.DeployTestDTO;
 import nl.syntouch.dmn.studio.service.UnitTestService;
-
 import java.io.IOException;
 
 import static nl.syntouch.dmn.studio.DmnStudioConstants.*;
@@ -22,21 +21,21 @@ public class TestDeploymentResource {
     private final UnitTestService unitTestService;
 
     @POST
-    @RolesAllowed({ROLE_DEVELOPER, ROLE_DEPLOYER})
+    @RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_DEPLOYER})
     public Response deployTestDeployment(DeployTestDTO deployTestDTO) throws IOException {
         return Response.ok(unitTestService.handleTestDeployment(deployTestDTO)).build();
     }
 
     @GET
     @Path("/{dmnId}/{version}/tests")
-    @RolesAllowed({ROLE_DEVELOPER, ROLE_APPROVER, ROLE_DEPLOYER})
+    @RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_APPROVER, ROLE_READ})
     public Response getTests(@PathParam("dmnId") Long dmnId, @PathParam("version") Long version) {
         return Response.ok(unitTestService.getTests(dmnId, version)).build();
     }
 
     @DELETE
     @Path("/{dmnId}/{version}/tests/{testId}")
-    @RolesAllowed({ROLE_DEVELOPER, ROLE_DEPLOYER})
+    @RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_DEPLOYER})
     public Response deleteTests(@PathParam("dmnId") Long dmnId, @PathParam("version") Long version, @PathParam("testId") Long testId) {
         unitTestService.deleteTest(dmnId, version, testId);
         return Response.noContent().build();

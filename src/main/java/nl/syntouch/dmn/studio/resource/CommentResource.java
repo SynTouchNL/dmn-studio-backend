@@ -6,6 +6,6 @@ import nl.syntouch.dmn.studio.model.Comment;
 
 import static nl.syntouch.dmn.studio.DmnStudioConstants.*;
 
-@RolesAllowed({ROLE_DEVELOPER, ROLE_APPROVER, ROLE_DEPLOYER})
+@RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_APPROVER, ROLE_DEPLOYER})
 public interface CommentResource extends PanacheEntityResource<Comment, Integer> {
 }

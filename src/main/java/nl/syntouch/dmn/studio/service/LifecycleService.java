@@ -4,20 +4,15 @@ import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.PathParam;
 import lombok.RequiredArgsConstructor;
 import nl.syntouch.dmn.studio.model.Change;
-import nl.syntouch.dmn.studio.model.Comment;
 import nl.syntouch.dmn.studio.model.DMNVersion;
 import nl.syntouch.dmn.studio.model.dto.ReviewDTO;
 import nl.syntouch.dmn.studio.model.dto.SubmissionDTO;
 import nl.syntouch.dmn.studio.repository.ChangeRepository;
 import nl.syntouch.dmn.studio.repository.CommentRepository;
 import nl.syntouch.dmn.studio.repository.DmnVersionRepository;
-
 import java.time.Instant;
-import java.util.List;
-import java.util.Objects;
 
 @Transactional
 @RequiredArgsConstructor

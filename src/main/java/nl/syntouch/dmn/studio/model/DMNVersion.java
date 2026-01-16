@@ -9,7 +9,6 @@ import lombok.Setter;
 import nl.syntouch.dmn.studio.model.composites.DMNVersionId;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.Instant;
 
 @Getter

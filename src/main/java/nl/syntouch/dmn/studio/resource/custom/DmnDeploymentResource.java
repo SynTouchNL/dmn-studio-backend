@@ -13,6 +13,7 @@ import org.openapi.quarkus.operaton_rest_api_json.model.DeploymentWithDefinition
 import java.io.IOException;
 import java.net.URI;
 
+import static nl.syntouch.dmn.studio.DmnStudioConstants.ROLE_ADMIN;
 import static nl.syntouch.dmn.studio.DmnStudioConstants.ROLE_DEPLOYER;
 
 @Path("/deploy")
@@ -20,7 +21,7 @@ import static nl.syntouch.dmn.studio.DmnStudioConstants.ROLE_DEPLOYER;
 @AllArgsConstructor
 @Produces("application/json")
 @Consumes("application/json")
-@RolesAllowed(ROLE_DEPLOYER)
+@RolesAllowed({ROLE_ADMIN, ROLE_DEPLOYER})
 public class DmnDeploymentResource {
 
     private final DmnDeploymentService dmnDeploymentService;
@@ -51,9 +52,9 @@ public class DmnDeploymentResource {
     }
 
     @DELETE
-    @Path("/{deploymentId}")
-    public Response deleteDeployment(@PathParam("deploymentId") String deploymentId, @QueryParam("cascade") boolean cascade) {
-        dmnDeploymentService.deleteDeployment(deploymentId, cascade);
+    @Path("/{envId}/{deploymentId}")
+    public Response deleteDeployment(@PathParam("envId") Long envId, @PathParam("deploymentId") Long deploymentId) {
+        dmnDeploymentService.deleteDeployment(deploymentId, envId);
         return Response.noContent().build();
     }
 
