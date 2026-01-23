@@ -4,12 +4,15 @@
 # Hoofdpagina's
 ## Home
 Na het inloggen wordt de 'Home' pagina getoond. Op deze pagina wordt een overzicht gegeven van de laatst gewijzigde DMN-modellen (maximaal 10).
-![[static/DMN_Recent.png]]
+
+![Recent DMNs](static/DMN_Recent.png)
 
 
 ## DMNs
 Als in het hoofdmenu op 'DMNs' wordt geklikt worden alle beschikbare DMN-modellen getoond.
-![[static/DMN_DMNs.png]]
+
+![DMN Overzicht](static/DMN_DMNs.png)
+
 Op deze pagina wordt de volgende functionaliteit geboden:
 
 | Knop | Resultaat |
@@ -37,10 +40,12 @@ Door op <img src="static/DMN_KnopAanmaken.png"> te klikken wordt het DMN-model m
 ### Detailpagina
 Op de detailpagina worden alle details van een DMN-model getoond:
 
-![[static/DMN_Details.png]]
+![DMN Details](static/DMN_Details.png)
 
 Bovenaan de details van het DMN-model wordt de voortgang getoond.  
-![[static/DMN_Lifecycle.png]]
+
+![DMN Lifecycle](static/DMN_Lifecycle.png)
+
 - ‘v0’ is het versienummer van het model waarop de getoonde versie is gebaseerd. Indien hier 'v0' wordt getoond betreft het een initiële versie
 - ‘C’ geeft de status aan dat het model in concept (realisatie) is
 - 'G' geeft aan dat het model wacht op goedkeuring
@@ -56,7 +61,9 @@ Bovenaan de details van het DMN-model wordt de voortgang getoond.  
 
 ### Testpagina
 Op deze pagina worden eerder uitgevoerde tests getoond en kunnen er nieuwe tests worden aangemaakt en uitgevoerd voor een DMN-model.
-![[static/DMN_TestOverzicht.png]]
+
+![Test Overzicht](static/DMN_TestOverzicht.png)
+
 Eerder uitgevoerde tests kunnen worden verwijderd door op <img src="static/DMN_KnopDelete.png"> te klikken in de ‘Actie’ kolom.
 
 Door op een uitgevoerde test uit het lijstje te klikken worden de details van die test getoond (zie [Uitgevoerde tests](#uitgevoerde-tests)).
@@ -64,20 +71,27 @@ Door op een uitgevoerde test uit het lijstje te klikken worden de details van di
 Door op het tabblad ‘Aanmaken’ te klikken kan er een nieuwe test worden aangemaakt (zie [Aanmaken test](#aanmaken-test)).
 #### Uitgevoerde tests
 Deze pagina toont de details van de geselecteerde test zoals hieronder weergegeven.
-![[static/DMN_TestDetails.png]]
+
+![Test Details](static/DMN_TestDetails.png)
+
 Vanuit deze pagina kan vervolgens een nieuwe test worden aangemaakt voor het gekozen DMN-model door op <img src="static/DMN_KnopInvoegen.png"> te klikken.
 
 Op de daaropvolgende pagina de gewenste test worden ingevoerd en uitgevoerd (zie [Testen](#testen)).
 #### Aanmaken test
-![[static/DMN_TestBeslissingen.png]]
+
+![Test Beslissingen](static/DMN_TestBeslissingen.png)
+
 Vanuit deze pagina kan vervolgens een beslissing worden aangeklikt waarvoor een test moet worden aangemaakt.
 
 Op de daarop volgende pagina de gewenste test worden ingevoerd en uitgevoerd (zie [Testen](#testen)).
 
 #### Testen
 Voor het aanmaken van een nieuwe test wordt de onderstaande pagina weergegeven.
-![[static/DMN_InvoerKV.png]]
-![[static/DMN_UitkomstKV.png]]
+
+![Invoer Key Value](static/DMN_InvoerKV.png)
+
+![Uitkomst Key Value](static/DMN_UitkomstKV.png)
+
 Hier dienen de volgende gegevens te worden ingevuld:
 
 - Titel; De titel die gegeven wenst te worden aan de test
@@ -91,15 +105,22 @@ Hier dienen de volgende gegevens te worden ingevuld:
 Door op <img src="static/DMN_KnopUitvoeren.png">te klikken wordt vervolgens de aangemaakte test uitgevoerd en als resultaat wordt één van onderstaande Test rapporten (Succesvol OF Niet succesvol) getoond.
 
 <u>Succesvol resultaat:</u>
-![[static/DMN_TestSuccess.png]]
+
+![Test Succes](static/DMN_TestSuccess.png)
+
 <u>Niet succesvol resultaat:</u>
-![[static/DMN_TestFailed.png]]
+
+![Test Failed](static/DMN_TestFailed.png)
 
 ### Nieuwe DMN versie
 Op deze pagina kan een nieuwe versie voor een bestaand DMN model worden aangemaakt.
-![[static/DMN_NieuweDMN.png]]
+
+![Nieuwe DMN](static/DMN_NieuweDMN.png)
+
 Hierbij kan in de dropdown gekozen worden voor de volgende opties:
-![[static/DMN_HergebruikenDropdown.png]]
+
+![Hergebruiken Dropdown](static/DMN_HergebruikenDropdown.png)
+
 - ‘Ja’; Nieuwe versie baseren op de vorige versie.
 - ‘Nee, nieuwe DMN’; Nieuwe versie vanaf scratch aanmaken.
 - ‘Nee, importeer een DMN’; Nieuwe versie baseren op een ‘extern’ DMN(XML)-bestand.
@@ -109,9 +130,12 @@ Na het klikken op <img src="static/DMN_KnopAanmaken.png"> wordt de DMN viewer (
 Op deze pagina wordt het DMN model in de Decision modeller getoond.
 
 De pagina wordt initieel geopend met het decision model in alleen lezen modus zoals hieronder weergegeven.
-![[static/DMN_DMNViewer.png]]
+
+![DMN Viewer](static/DMN_DMNViewer.png)
+
 Bovenaan zijn tabbladen beschikbaar om door te kunnen springen naar een specifieke decision tabel uit het model zoals hieronder als voorbeeld is weergegeven. Klikken op een decision tabel in het model heeft hetzelfde resultaat.
-![[static/DMN_DecisionTable.png]]
+
+![Decision Table](static/DMN_DecisionTable.png)
 
 | Knop | Resultaat |
 | ------------------------------------ | ------------------------------------------------------------------------------------------- |
@@ -121,17 +145,21 @@ Bovenaan zijn tabbladen beschikbaar om door te kunnen springen naar een specifie
 ### DMN review
 #### Aanbieden ter review en goedkeuring
 Op deze pagina kan een specifieke versie van een DMN model ter review en goedkeuring worden aangeboden.
-![[static/DMN_Review.png]]
+
+![DMN Review](static/DMN_Review.png)
+
 Hier kan een beschrijving van de wijziging worden vermeld en kan er uit de dropdown een gebruiker te worden geselecteerd die de review en goedkeuring dient uit te voeren.
 #### Review selecteren
 De aangewezen controleur zal in het overzicht van DMNs vervolgens het te reviewen DMN-model kunnen selecteren. Op de dan zoals onderstaand weergegeven pagina kan vervolgens door de controleur de uitgevoerde test worden bekeken en nieuwe worden aangemaakt (zie [Testpagina](#testpagina)) alsook het model worden geopend in de Decision modeller (zie [DMN Viewer](#dmn-viewer)) net als de developer.
 
 Daarnaast kan de controleur op deze pagina op klikken om daarmee de daadwerkelijk review en goedkeuring uit te voeren (zie [Nakijken](#nakijken)).
-![[static/DMN_GoedkeurenDetail.png]]
+
+![Goedkeuren DMN](static/DMN_GoedkeurenDetail.png)
 
 #### Nakijken
 Op deze pagina ziet de controleur nogmaals de details van de te reviewen versie van een DMN model.
-![[static/DMN_Nakijken.png]]
+
+![DMN Nakijken](static/DMN_Nakijken.png)
 
 Op deze pagina wordt verder de volgende functionaliteit geboden:
 
@@ -145,7 +173,9 @@ Op deze pagina wordt verder de volgende functionaliteit geboden:
 
 ## Deployments
 Als in het hoofdmenu op 'Deployments' wordt geklikt worden alle deployments getoond van de verschillende DMN modellen.
-![[static/DMN_DeploymentOverzicht.png]]
+
+![Deployment Overzicht](static/DMN_DeploymentOverzicht.png)
+
 Op deze pagina wordt de volgende functionaliteit geboden:
 
 | Knop | Resultaat |
@@ -158,15 +188,19 @@ Op deze pagina wordt de volgende functionaliteit geboden:
 
 ### Deployment aanmaken
 Op deze pagina kan een uitrol van een specifieke versie van een DMN model worden uitgevoerd naar een op te geven omgeving (test, acceptatie, productie)
-![[static/DMN_DeploymentAanmaken.png]]
+
+![Deployment Aanmaken](static/DMN_DeploymentAanmaken.png)
+
 Hier dienen de volgende gegevens te worden ingevuld (als er bijvoorbeeld voor een domein of DMN geen versie beschikbaar is om uit te rollen zal de betreffende dropdown en daaropvolgende leeg blijven):
 - ‘Domein’; Selecteer hier het domein waaruit een DMN dient te worden uitgerold.
 - ‘DMN’; Selecteer hier een DMN-model uit het gekozen domein.
 - ‘Versie’; Selecteer hier een versie van het DMN-model.
 - ‘Omgeving’; Kies hier de omgeving waar het DMN-model dient te worden uitgerold.
 Na het klikken op <img src="static/DMN_KnopUitrollen.png"> wordt er teruggekeerd naar het ‘Deployment overzicht’ en wordt er een melding getoond van de uitrol van de zojuist aangemaakte deployment.
+
 ![Goedverlopen](static/DMN_StatusBericht.png)
 
 ## Uitloggen
 Bovenaan rechts van de applicatie is de mogelijkheid om uit te loggen. Als op het icoontje wordt geklikt verschijnt de naam van de ingelogde gebruiker met daaronder de optie 'Log uit' om uit te loggen.
+
 ![Uitloggen](static/DMN_UserLogout.png)
