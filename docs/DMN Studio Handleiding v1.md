@@ -14,17 +14,18 @@ Op deze pagina wordt de volgende functionaliteit geboden:
 
 | Knop | Resultaat |
 | ------------------------------------ | ---------------------------------------------------------------- |
-| <img src="static/DMN_KnopAanmaken.png" alt="Aanmaken"> | Aanmaken van een nieuw DMN-model (zie [[#Nieuwe DMN aanmaken]]). |
+| <img src="static/DMN_KnopAanmaken.png" alt="Aanmaken"> | Aanmaken van een nieuw DMN-model (zie [Nieuwe DMN aanmaken](#nieuwe-dmn-aanmaken)). |
 | <img src="static/DMN_KnopFilter.png" alt="Domein filteren"> | Filteren van DMN-modellen op ‘domein’. |
 | <img src="static/DMN_Zoeken.png" alt="Zoeken"> | Zoeken op (een gedeelte) van de naam van een DMN-model.          |
 | <img src="static/DMN_Pagination.png" alt="Pagination"> | Bladeren door de pagina's met DMN-modellen.                      |
 | <img src="static/DMN_DMNsPerPagina.png" alt="DMNs per pagina"> | Instellen van het aantal DMN-modellen per pagina.                |
 
-Bij het klikken op één van de regels met een DMN-model wordt de detailpagina hiervan geopend (zie [[#Detailpagina]])
+Bij het klikken op één van de regels met een DMN-model wordt de detailpagina hiervan geopend (zie [Detailpagina](#detailpagina))
 
 ### Nieuwe DMN aanmaken
 Op deze pagina kan een nieuw DMN-model worden aangemaakt.
-![[Pasted image 20260123101644.png]]
+![Nieuwe DMN aanmaken](static/DMN_NieuweDMN.png)
+
 Hier dienen de volgende gegevens te worden ingevuld:
 
 - ‘Naam DMN’; De naam van het DMN-model.
@@ -48,9 +49,9 @@ Bovenaan de details van het DMN-model wordt de voortgang getoond.  
 
 | Knop | Resultaat |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| <img src="static/DMN_KnopTests.png"> | Testen en inzien van eerder uitgevoerde testen van de getoonde versie van een DMN model (zie [[#Testpagina]])|
-| <img src="static/DMN_KnopBewerken.png">| Aanpassingen maken op een bestaand DMN-model door een nieuwe 'concept' versie aan te maken (zie [[#Nieuwe DMN versie]]). Dit kan alleen wanneer de laatste versie in productie is genomen en er geen andere versies in concept staan. |
-| <img src="static/DMN_KnopBewerken.png"> | De getoonde versie van een DMN-model weergeven in de DMNStudio-modeller (zie [[#DMN viewer]])|
+| <img src="static/DMN_KnopTests.png"> | Testen en inzien van eerder uitgevoerde testen van de getoonde versie van een DMN model (zie [Testpagina](#testpagina))|
+| <img src="static/DMN_KnopBewerken.png">| Aanpassingen maken op een bestaand DMN-model door een nieuwe 'concept' versie aan te maken (zie [Nieuwe DMN versie](#nieuwe-dmn-versie)). Dit kan alleen wanneer de laatste versie in productie is genomen en er geen andere versies in concept staan. |
+| <img src="static/DMN_KnopBewerken.png"> | De getoonde versie van een DMN-model weergeven in de DMNStudio-modeller (zie [DMN viewer](#dmn-viewer))|
 | <img src="static/DMN_VersieOverzicht.png"> | Switchen tussen de beschikbare versies van een DMN-model|
 
 ### Testpagina
@@ -58,20 +59,20 @@ Op deze pagina worden eerder uitgevoerde tests getoond en kunnen er nieuwe tests
 ![[static/DMN_TestOverzicht.png]]
 Eerder uitgevoerde tests kunnen worden verwijderd door op <img src="static/DMN_KnopDelete.png"> te klikken in de ‘Actie’ kolom.
 
-Door op een uitgevoerde test uit het lijstje te klikken worden de details van die test getoond (zie [[#Uitgevoerde tests]])
+Door op een uitgevoerde test uit het lijstje te klikken worden de details van die test getoond (zie [Uitgevoerde tests](#uitgevoerde-tests)).
 
-Door op het tabblad ‘Aanmaken’ te klikken kan er een nieuwe test worden aangemaakt (zie [[#Aanmaken test]])
+Door op het tabblad ‘Aanmaken’ te klikken kan er een nieuwe test worden aangemaakt (zie [Aanmaken test](#aanmaken-test)).
 #### Uitgevoerde tests
 Deze pagina toont de details van de geselecteerde test zoals hieronder weergegeven.
 ![[static/DMN_TestDetails.png]]
 Vanuit deze pagina kan vervolgens een nieuwe test worden aangemaakt voor het gekozen DMN-model door op <img src="static/DMN_KnopInvoegen.png"> te klikken.
 
-Op de daaropvolgende pagina de gewenste test worden ingevoerd en uitgevoerd (zie [[#Testen]]).
+Op de daaropvolgende pagina de gewenste test worden ingevoerd en uitgevoerd (zie [Testen](#testen)).
 #### Aanmaken test
 ![[static/DMN_TestBeslissingen.png]]
 Vanuit deze pagina kan vervolgens een beslissing worden aangeklikt waarvoor een test moet worden aangemaakt.
 
-Op de daarop volgende pagina de gewenste test worden ingevoerd en uitgevoerd (zie [[#Testen]]).
+Op de daarop volgende pagina de gewenste test worden ingevoerd en uitgevoerd (zie [Testen](#testen)).
 
 #### Testen
 Voor het aanmaken van een nieuwe test wordt de onderstaande pagina weergegeven.
@@ -115,17 +116,17 @@ Bovenaan zijn tabbladen beschikbaar om door te kunnen springen naar een specifie
 | Knop | Resultaat |
 | ------------------------------------ | ------------------------------------------------------------------------------------------- |
 | <img src="static/DMN_KnopBewerken.png"> | Het getoonde Decision model openen voor bewerking.                                          |
-| <img src="static/DMN_KnopIndienen.png"> | Het getoonde Decision model aanbieden ter goedkeuring (zie [[#DMN Review]]).                |
+| <img src="static/DMN_KnopIndienen.png"> | Het getoonde Decision model aanbieden ter goedkeuring (zie [DMN Review](#dmn-review)).                |
 | <img src="static/DMN_KnopExporteren.png" > | Het getoonde Decision model exporteren oftewel downloaden in het standaard DMN(XML)-format. |
 ### DMN review
 #### Aanbieden ter review en goedkeuring
 Op deze pagina kan een specifieke versie van een DMN model ter review en goedkeuring worden aangeboden.
-![[]]
+![[static/DMN_Review.png]]
 Hier kan een beschrijving van de wijziging worden vermeld en kan er uit de dropdown een gebruiker te worden geselecteerd die de review en goedkeuring dient uit te voeren.
 #### Review selecteren
-De aangewezen controleur zal in het overzicht van DMNs vervolgens het te reviewen DMN-model kunnen selecteren. Op de dan zoals onderstaand weergegeven pagina kan vervolgens door de controleur de uitgevoerde test worden bekeken en nieuwe worden aangemaakt (zie [[#Testpagina]]) alsook het model worden geopend in de Decision modeller (zie [[#DMN viewer]]) net als de developer.
+De aangewezen controleur zal in het overzicht van DMNs vervolgens het te reviewen DMN-model kunnen selecteren. Op de dan zoals onderstaand weergegeven pagina kan vervolgens door de controleur de uitgevoerde test worden bekeken en nieuwe worden aangemaakt (zie [Testpagina](#testpagina)) alsook het model worden geopend in de Decision modeller (zie [DMN Viewer](#dmn-viewer)) net als de developer.
 
-Daarnaast kan de controleur op deze pagina op klikken om daarmee de daadwerkelijk review en goedkeuring uit te voeren (zie [[#Nakijken]])
+Daarnaast kan de controleur op deze pagina op klikken om daarmee de daadwerkelijk review en goedkeuring uit te voeren (zie [Nakijken](#nakijken)).
 ![[static/DMN_GoedkeurenDetail.png]]
 
 #### Nakijken
@@ -138,8 +139,8 @@ Op deze pagina wordt verder de volgende functionaliteit geboden:
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | <img src="static/DMN_KnopBekijken.png"> | Hiermee kan de controleur nogmaals het DMN model inzien. |
 | <img src="static/DMN_KnopCancel.png">| Hiermee wordt het verzoek om na te kijken gecanceld en daarmee verwijderd. |
-| <img src="static/DMN_KnopAkkoord.png"> | Door deze schuif aan te zetten naar rechts kan het nakijken wel of niet geakkoordeerd worden |
-| <img src="static/DMN_KnopIndienen.png"> | Hiermee kan het erboven geselecteerde akkoord OF niet-akkoord worden ingediend. Bij niet-akkoord gaat de versie weer terug naar concept en bij akkoord kan deze vervolgens worden uitgerold naar de decision-engine (zie [[#Deployments]]) |
+| <img src="static/DMN_KnopAkkoord.png"> | Door deze schuif aan te zetten naar rechts kan het nakijken wel of niet geakkoordeerd worden. |
+| <img src="static/DMN_KnopIndienen.png"> | Hiermee kan het erboven geselecteerde akkoord OF niet-akkoord worden ingediend. Bij niet-akkoord gaat de versie weer terug naar concept en bij akkoord kan deze vervolgens worden uitgerold naar de decision-engine (zie [Deployments](#deployments)).|
 
 
 ## Deployments
@@ -164,8 +165,8 @@ Hier dienen de volgende gegevens te worden ingevuld (als er bijvoorbeeld voor ee
 - ‘Versie’; Selecteer hier een versie van het DMN-model.
 - ‘Omgeving’; Kies hier de omgeving waar het DMN-model dient te worden uitgerold.
 Na het klikken op <img src="static/DMN_KnopUitrollen.png"> wordt er teruggekeerd naar het ‘Deployment overzicht’ en wordt er een melding getoond van de uitrol van de zojuist aangemaakte deployment.
-![[Pasted image 20260123104702.png]]
+![Goedverlopen](static/DMN_StatusBericht.png)
+
 ## Uitloggen
 Bovenaan rechts van de applicatie is de mogelijkheid om uit te loggen. Als op het icoontje wordt geklikt verschijnt de naam van de ingelogde gebruiker met daaronder de optie 'Log uit' om uit te loggen.
-![[static/DMN_UserLogout.png]]
-
+![Uitloggen](static/DMN_UserLogout.png)
