@@ -1,5 +1,6 @@
 package nl.syntouch.dmn.studio.service;
 
+import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
@@ -19,6 +20,7 @@ import nl.syntouch.dmn.studio.repository.DmnVersionRepository;
 @ApplicationScoped
 public class DmnVersionService {
 
+    private final SecurityIdentity identity;
     private final DmnRepository dmnRepository;
     private final DmnVersionRepository dmnVersionRepository;
 
@@ -30,7 +32,8 @@ public class DmnVersionService {
         version.setVersion(nextVersion);
         version.setDmn(dmn);
         version.setFileBlob(versionDTO.fileBlob());
-        version.setCreatedBy(versionDTO.createdBy());
+        version.setCreatedBy(identity.getPrincipal().getName());
+        version.setModifiedBy(identity.getPrincipal().getName());
         dmnVersionRepository.persist(version);
         return version;
     }
@@ -42,7 +45,7 @@ public class DmnVersionService {
     public void updateFile(Long dmnId, Long versionId, DMNUpdateFileDTO versionDTO) {
         DMNVersion dmnVersion = dmnVersionRepository.findByIdOptional(new DMNVersionId(dmnId, versionId)).orElseThrow(() -> new NotFoundException("DMN Version not found"));
         dmnVersion.setFileBlob(versionDTO.fileBlob());
-        dmnVersion.setModifiedBy(versionDTO.updatedBy());
+        dmnVersion.setModifiedBy(identity.getPrincipal().getName());
         dmnVersion.persist();
     }
 }

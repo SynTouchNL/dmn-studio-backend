@@ -61,15 +61,23 @@ public class LifecycleService {
         if(reviewDTO.approved()) {
             DMNVersion approvedVersion = dmnVersionRepository.find("dmn.id = ?1 and version = ?2", dmnId, version).firstResult();
             DMNVersion previousVersion = dmnVersionRepository.find("dmn.id = ?1 and status = 4 and version != ?2", dmnId, version).firstResult();
-            if(approvedVersion != null){
+            if(approvedVersion != null) {
                 approvedVersion.setStatus(4L); // Approved
                 approvedVersion.persist();
             } else {
                 throw new EntityNotFoundException("Approved version does not exist.");
             }
-            if(previousVersion != null){
+            if(previousVersion != null) {
                 previousVersion.setStatus(5L); // Archived
                 previousVersion.persist();
+            }
+        } else {
+            DMNVersion rejectedVersion = dmnVersionRepository.find("dmn.id = ?1 and version = ?2", dmnId, version).firstResult();
+            if(rejectedVersion != null) {
+                rejectedVersion.setStatus(1L); // Concept
+                rejectedVersion.persist();
+            } else {
+                throw new EntityNotFoundException("Rejected version does not exist.");
             }
         }
         return modifiedChange;

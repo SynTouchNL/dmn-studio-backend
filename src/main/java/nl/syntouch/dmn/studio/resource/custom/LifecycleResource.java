@@ -29,7 +29,7 @@ public class LifecycleResource {
     @POST
     @Path("/{dmnId}/{version}/submit")
     @RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_DEPLOYER})
-    public Response submitForReview(@PathParam("dmnId") Long dmnId, @PathParam("version") Long version, SubmissionDTO submissionDTO) { // TODO: define proper DTO\
+    public Response submitForReview(@PathParam("dmnId") Long dmnId, @PathParam("version") Long version, SubmissionDTO submissionDTO) {
         if (lifecycleService.getPendingReview(dmnId, version) == null) {
             return Response.ok(lifecycleService.handleSubmission(dmnId, version, submissionDTO)).build();
         } else {
@@ -48,7 +48,7 @@ public class LifecycleResource {
     @POST
     @Path("/{dmnId}/{version}/{changeId}/review")
     @RolesAllowed({ROLE_ADMIN, ROLE_APPROVER})
-    public Response reviewComplete(@PathParam("dmnId") Long dmnId, @PathParam("version") Long version, @PathParam("changeId") Long changeId, ReviewDTO reviewDTO) { // TODO: define proper DTO
+    public Response reviewComplete(@PathParam("dmnId") Long dmnId, @PathParam("version") Long version, @PathParam("changeId") Long changeId, ReviewDTO reviewDTO) {
         return Response.ok(lifecycleService.handleReview(dmnId, version, changeId, reviewDTO)).build();
     }
 }
