@@ -149,3 +149,9 @@ java -jar target/quarkus-app/quarkus-run.jar
 2. Create a feature branch
 3. Make your changes
 4. Submit a pull request
+
+
+## Licensing
+Copyright © 2026 SynTouch B.V.
+
+This project is licensed under the European Union Public Licence (EUPL) Version 1.2 or later — see the [LICENSE](LICENSE) file for details.
