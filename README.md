@@ -150,7 +150,6 @@ java -jar target/quarkus-app/quarkus-run.jar
 3. Make your changes
 4. Submit a pull request
 
-
 ## Licensing
 Copyright © 2026 SynTouch B.V.
 
