@@ -152,4 +152,5 @@ java -jar target/quarkus-app/quarkus-run.jar
 
 ## Licensing
 Copyright © 2026 SynTouch B.V.
+
 This project is licensed under the European Union Public Licence (EUPL) Version 1.2 or later — see the [LICENSE](LICENSE) file for details.
