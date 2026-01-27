@@ -1,4 +1,4 @@
-![[static/dmnstudio_logo.png]]
+![DMN Studio Logo](static/dmnstudio_logo.png)
 # DMN Studio Handleiding v1
 
 # Hoofdpagina's
