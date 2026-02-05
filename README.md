@@ -2,6 +2,7 @@
 [![Build and Publish Docker Images](https://github.com/SynTouchNL/DMNStudioBackend/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/SynTouchNL/DMNStudioBackend/actions/workflows/docker-publish.yml)
 
 ## Overview
+_The user manual (Dutch) can be found [Here](<docs/DMN Studio Handleiding v1.md>)_
 
 DMN Studio Backend is a Quarkus-based REST API for managing DMN (Decision Model Notation) files with comprehensive version control, deployment management, and Operaton workflow engine integration. The application provides a secure, enterprise-ready platform for managing decision models with features including:
 
@@ -12,6 +13,7 @@ DMN Studio Backend is a Quarkus-based REST API for managing DMN (Decision Model 
 - **Environment Management**: Support for multiple deployment environments
 - **Audit Trail**: Track changes and comments on DMN versions
 - **Testing Support**: Manage test cases for DMN models
+
 
 ## Running the Application
 
