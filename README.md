@@ -1,7 +1,7 @@
+<img src="docs/static/dmnstudio_logo.png" width="200"/>
+
 # DMN Studio Backend
 [![Build and Publish Docker Images](https://github.com/SynTouchNL/DMNStudioBackend/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/SynTouchNL/DMNStudioBackend/actions/workflows/docker-publish.yml)
-
-![DMN Studio Logo](docs/static/dmnstudio_logo.png)
 
 # Overzicht
 _Meer high-level informatie over het bestaansrecht van DMNStudio kan [hier](https://dienstverleningsplatform.gitbook.io/platform-generieke-dienstverlening-public/onderzoeken/beslisregels-dmn) gevonden worden. De archtectuur beschrijving van DMNStudio staat [hier](https://dienstverleningsplatform.gitbook.io/platform-generieke-dienstverlening-public/onderzoeken/beslisregels-dmn/dmnstudio)_
