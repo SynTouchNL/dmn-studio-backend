@@ -1,6 +1,75 @@
 # DMN Studio Backend
 [![Build and Publish Docker Images](https://github.com/SynTouchNL/DMNStudioBackend/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/SynTouchNL/DMNStudioBackend/actions/workflows/docker-publish.yml)
 
+![DMN Studio Logo](docs/static/dmnstudio_logo.png)
+
+# Overzicht
+_Meer high-level informatie over het bestaansrecht van DMNStudio kan [hier](https://dienstverleningsplatform.gitbook.io/platform-generieke-dienstverlening-public/onderzoeken/beslisregels-dmn) gevonden worden. De archtectuur beschrijving van DMNStudio staat [hier](https://dienstverleningsplatform.gitbook.io/platform-generieke-dienstverlening-public/onderzoeken/beslisregels-dmn/dmnstudio)_
+DMNStudio is een webapplicatie die kan worden gebruikt om beslissingsmodellen te modelleren, testen en goedkeuren. Het biedt een gestructureerde en flexibele werkomgeving waarin beslissingsmodellen per werkdomein kunnen worden gecreëerd, gevalideerd en goedgekeurd. Na goedkeuring kunnen deze modellen worden uitgerold naar verschillende omgevingen (test, acceptatie en productie) voor integratie met bestaande applicaties.
+
+## Voordelen
+- Volledig open source
+- Het haalt de business logica (Leges, kosten, beslissingen) uit de applicaties
+- Geen programmeur nodig voor opstellen en wijzigen van de business logica
+- Low code; De modellen kunnen door functionele business personen zonder technische kennis worden ontwikkeld.
+- Ingebouwde stappen voor testen en goedkeuring 
+- Beslissingsmodellen zijn snel en duidelijk testbaar
+- Eenvoudig uitrollen over omgevingen
+- Deelbare bouwblokken binnen en buiten de eigen organisatie
+- Lage kosten voor ontwikkeling en voortbrenging
+- Haven plus compliant, dus cloud onafhankelijk
+
+## Doelgroep
+De primaire gebruikers van DMNStudio zijn functionele beheerders en gebruikers binnen een organisatie, zoals beleidsmedewerkers, procesbeheerders, en applicatiebeheerders. Zij hebben geen diepgaande technische kennis nodig om de applicatie te gebruiken, maar moeten wel in staat zijn om beslissingsmodellen te begrijpen en te beheren.
+
+## Belangrijkste Functionaliteiten
+1. Modelleeromgeving voor Beslissingsmodellen
+- Keuze voor Werkdomein: Gebruikers kunnen beslissingsmodellen creëren voor specifieke werkdomeinen, zoals vergunningverlening, handhaving, jeugdzorg, belastingheffing, etc.
+- Grafische Modelbouwer: Een intuïtieve interface om beslissingsmodellen en beslistabellen met als-dan beslissingen te maken gebaseerd op de DMN (Decision Model and Notation) standaard.
+- Keuzes en Beslissingen: Gebruikers kunnen verschillende regels, beslissingen en keuzes definiëren binnen een model.
+
+2. Validatie en Testen
+- Testscenario’s: Gebruikers kunnen testscenario’s opstellen met specifieke invoerwaarden en verwachte uitvoerwaarde(n) om de werking van beslissingsmodellen te simuleren.
+- Resultaatanalyse: Het systeem toont de output van testscenario’s en biedt feedback over eventuele afwijkingen van de verwachte uitkomst.
+- Versiebeheer: Elke wijziging aan een model wordt opgeslagen met versiebeheer, zodat gebruikers oude versies kunnen raadplegen of terugdraaien naar eerdere versies.
+
+3. Goedkeuringsproces
+- Goedkeuring: Elk beslissingsmodel en versie daarvan dient goedgekeurd te worden door een daartoe bevoegde en daarvoor aangewezen beheerder of procesverantwoordelijke alvorens deze kan worden uitgerold over de omgevingen.
+
+4. Uitrol naar Omgevingen
+- Stapsgewijze Uitrol: Na goedkeuring kan het beslissingsmodel worden uitgerold naar verschillende omgevingen:
+  - Testomgeving: Om het model te testen in een gecontroleerde omgeving zonder impact op de productie.
+  - Acceptatieomgeving: Waar gebruikers in een meer realistische omgeving kunnen controleren of het model voldoet aan de functionele eisen.
+  - Productieomgeving: Het model wordt geactiveerd en beschikbaar voor gebruik in bestaande applicaties.
+
+5. Integratie met bestaande Applicaties binnen de organisatie
+- Koppelingen met Applicaties: Na goedkeuring kunnen de beslissingsmodellen via API’s beschikbaar worden gesteld aan de bestaande applicaties, zoals geautomatiseerde systemen voor vergunningverlening of belastingheffing.
+- Realtime Toepassing: Beslissingsmodellen kunnen in realtime beslissingen nemen en terugkoppeling geven aan de operationele systemen binnen de organisatie.
+
+6. Beveiliging en Toegangsbeheer
+- Gebruikersrollen en Machtigingen: Het systeem ondersteunt verschillende gebruikersrollen (beheerder, functioneel gebruiker, goedkeurder) met specifieke rechten.
+- Authenticatie en Autorisatie: Inloggen en rol autorisatie gebeurt met KeyCloak en ActiveDirectory
+
+7. Interface en Gebruikerservaring
+- Gebruiksvriendelijke Interface: De applicatie biedt een moderne, responsieve interface.
+
+8. Technische Specificaties
+- Webgebaseerd: DMNStudio is volledig webgebaseerd en vereist geen lokale installatie.
+- Cloudgebaseerd of On-premise: Het systeem kan worden gehost in de cloud of lokaal binnen de eigen infrastructuur.
+- Compliancy: De beslissingsmodellen zijn DMN 1.2 compliant.
+ 
+## Conclusie
+DMNStudio is een krachtige, gebruiksvriendelijke applicatie die functionele gebruikers in staat stelt beslissingsmodellen effectief te creëren, testen, goed te keuren en uiteindelijk uit te rollen naar (productie)omgevingen. Het biedt een gestroomlijnd proces voor modelontwikkeling en integratie, en draagt bij aan een efficiënter beheer van processen door het toepassen van data-gedreven beslissingen.
+
+## Geplande doorontwikkeling:
+- Doorontwikkeling wordt geborgd in de G4
+- Trainingsmateriaal
+- Support van meer DMN-Engines (nu enkel Camunda & Operaton)
+- Workflow sturing inclusief notificaties en eventueel takenbakken
+
+
+_____
+# Techincal overview
 ## Overview
 _The user manual (Dutch) can be found [Here](<docs/DMN Studio Handleiding v1.md>)_
 
