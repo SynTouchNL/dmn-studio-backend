@@ -50,7 +50,11 @@ public class DmnService {
         List<DMN> dmns = dmnRepository.listAll();
         for(DMN dmn : dmns) {
             UserRepresentation user = keycloakService.getUserByUsername(dmn.getOwner());
-            dmn.setOwner(user.getFirstName() + " " + user.getLastName());
+            if (user != null) {
+                dmn.setOwner(user.getFirstName() + " " + user.getLastName());
+            } else {
+                dmn.setOwner("Onbekende eigenaar");
+            }
         }
         return dmns;
     }
