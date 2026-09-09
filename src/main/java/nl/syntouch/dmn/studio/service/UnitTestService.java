@@ -23,13 +23,12 @@ import org.openapi.quarkus.operaton_rest_api_json.api.DeploymentApi;
 import org.openapi.quarkus.operaton_rest_api_json.model.DeploymentWithDefinitionsDto;
 import nl.syntouch.dmn.studio.repository.DmnRepository;
 import nl.syntouch.dmn.studio.repository.DmnVersionRepository;
+import org.openapi.quarkus.operaton_rest_api_json.api.DecisionDefinitionApi;
+import org.openapi.quarkus.operaton_rest_api_json.model.EvaluateDecisionDto;
+import org.openapi.quarkus.operaton_rest_api_json.model.VariableValueDto;
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Transactional
@@ -116,7 +115,6 @@ public class UnitTestService {
     }
 
     public UnittestResultDTO callTestDeployment(DeploymentWithDefinitionsDto deploymentWithDefinitionsDto, DeployTestDTO deployTestDTO) {
-        HttpClient client = HttpClient.newHttpClient();
         Optional<String> decisionDefinitionIdOpt = deploymentWithDefinitionsDto
                 .getDeployedDecisionDefinitions()
                 .keySet()
@@ -126,15 +124,14 @@ public class UnitTestService {
         String decisionDefinitionId = decisionDefinitionIdOpt.orElse(null);
 
         try {
-            String jsonInput = buildJSON(deployTestDTO.inputData());
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(unitTestUrl + "/engine-rest/decision-definition/" + decisionDefinitionId + "/evaluate"))
-                    .POST(HttpRequest.BodyPublishers.ofString(jsonInput))
-                    .header("Content-Type", "application/json")
-                    .build();
+            DecisionDefinitionApi unitTestClient = RestClientBuilder.newBuilder()
+                    .baseUri(URI.create(unitTestUrl + "/engine-rest"))
+                    .build(DecisionDefinitionApi.class);
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            String responseBody = response.body();
+            EvaluateDecisionDto evaluateDecisionDto = buildEvaluateDecisionDto(deployTestDTO.inputData());
+            List<Map<String, VariableValueDto>> result = unitTestClient.evaluateDecisionById(decisionDefinitionId, evaluateDecisionDto);
+
+            String responseBody = objectMapper.writeValueAsString(result);
             boolean passed = compareDMNResponse(buildOutputJSON(deployTestDTO.outputData()), responseBody);
             Test unitTest = unittestRepository.find("decisionName = ?1 AND dmnVersion.dmn.id = ?2 AND dmnVersion.version = ?3",
                     deployTestDTO.decisionName(),
@@ -149,19 +146,17 @@ public class UnitTestService {
          }
      }
 
-    private String buildJSON(List<DeployTestDTO.ParamDTO> inputData) throws JsonProcessingException {
-        Map<String, Object> variables = inputData.stream()
-                .collect(Collectors.toMap(
-                        DeployTestDTO.ParamDTO::key,
-                        param -> Map.of(
-                                "value", param.value(),
-                                "type", param.typeRef()
-                        ),
-                        (existing, replacement) -> existing,
-                        LinkedHashMap::new
-                ));
-
-        return objectMapper.writeValueAsString(Map.of("variables", variables));
+    private EvaluateDecisionDto buildEvaluateDecisionDto(List<DeployTestDTO.ParamDTO> inputData) {
+        Map<String, VariableValueDto> variables = new LinkedHashMap<>();
+        for (DeployTestDTO.ParamDTO param : inputData) {
+            VariableValueDto variableValueDto = new VariableValueDto();
+            variableValueDto.setValue(param.value());
+            variableValueDto.setType(param.typeRef());
+            variables.put(param.key(), variableValueDto);
+        }
+        EvaluateDecisionDto evaluateDecisionDto = new EvaluateDecisionDto();
+        evaluateDecisionDto.setVariables(variables);
+        return evaluateDecisionDto;
     }
 
     private String buildOutputJSON(List<DeployTestDTO.ParamDTO> outputData) throws JsonProcessingException {
