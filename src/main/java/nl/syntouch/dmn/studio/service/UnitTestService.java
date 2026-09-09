@@ -160,18 +160,16 @@ public class UnitTestService {
     }
 
     private String buildOutputJSON(List<DeployTestDTO.ParamDTO> outputData) throws JsonProcessingException {
-        ArrayNode expectedArray = objectMapper.createArrayNode();
+        ObjectNode combinedObject = objectMapper.createObjectNode();
         for (DeployTestDTO.ParamDTO param : outputData) {
-            ObjectNode paramObject = objectMapper.createObjectNode();
             ObjectNode valueObject = objectMapper.createObjectNode();
             String capitalized = param.typeRef().isEmpty() ? param.typeRef() : param.typeRef().substring(0,1).toUpperCase() + param.typeRef().substring(1);
             valueObject.put("value", param.value());
             valueObject.put("type", capitalized);
             valueObject.set("valueInfo", objectMapper.createObjectNode()); // empty object
-            paramObject.set(param.key(), valueObject);
-            expectedArray.add(paramObject);
+            combinedObject.set(param.key(), valueObject);
         }
-        return expectedArray.toString();
+        return objectMapper.createArrayNode().add(combinedObject).toString();
     }
 
     private boolean compareDMNResponse(String expectedParams, String dmnResponseJson) throws Exception {
