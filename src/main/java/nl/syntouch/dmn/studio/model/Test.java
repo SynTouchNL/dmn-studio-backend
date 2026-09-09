@@ -30,6 +30,9 @@ public class Test extends PanacheEntityBase {
     @JsonBackReference
     private DMNVersion dmnVersion;
 
+    @Column(name = "decision_definition_id", nullable = false)
+    private String decisionDefinitionId;
+
     private Boolean passed;
 
     @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
