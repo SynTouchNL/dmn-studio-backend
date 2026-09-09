@@ -23,6 +23,7 @@ import org.openapi.quarkus.operaton_rest_api_json.model.DeploymentWithDefinition
 import nl.syntouch.dmn.studio.repository.DmnRepository;
 import nl.syntouch.dmn.studio.repository.DmnVersionRepository;
 import org.openapi.quarkus.operaton_rest_api_json.api.DecisionDefinitionApi;
+import org.openapi.quarkus.operaton_rest_api_json.model.DecisionDefinitionDto;
 import org.openapi.quarkus.operaton_rest_api_json.model.EvaluateDecisionDto;
 import org.openapi.quarkus.operaton_rest_api_json.model.VariableValueDto;
 
@@ -53,9 +54,9 @@ public class UnitTestService {
 
         DeploymentWithDefinitionsDto deployment = createTestDeployment(deployTestDTO, dmn, dmnVersion);
         String decisionDefinitionId = deployment.getDeployedDecisionDefinitions()
-                .entrySet().stream()
-                .filter(e -> deployTestDTO.decisionName().equals(e.getValue().getKey()))
-                .map(Map.Entry::getKey)
+                .values().stream()
+                .filter(dto -> deployTestDTO.decisionName().equals(dto.getKey()))
+                .map(DecisionDefinitionDto::getId)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No deployed decision found with key: " + deployTestDTO.decisionName()));
 
