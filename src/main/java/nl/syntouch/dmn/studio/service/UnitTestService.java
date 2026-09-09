@@ -165,8 +165,8 @@ public class UnitTestService {
             ObjectNode paramObject = objectMapper.createObjectNode();
             ObjectNode valueObject = objectMapper.createObjectNode();
             String capitalized = param.typeRef().isEmpty() ? param.typeRef() : param.typeRef().substring(0,1).toUpperCase() + param.typeRef().substring(1);
-            valueObject.put("type", capitalized);
             valueObject.put("value", param.value());
+            valueObject.put("type", capitalized);
             valueObject.set("valueInfo", objectMapper.createObjectNode()); // empty object
             paramObject.set(param.key(), valueObject);
             expectedArray.add(paramObject);
