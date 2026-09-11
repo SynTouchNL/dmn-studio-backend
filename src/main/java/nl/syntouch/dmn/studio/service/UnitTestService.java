@@ -48,15 +48,20 @@ public class UnitTestService {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public UnittestResultDTO handleTestDeployment(DeployTestDTO deployTestDTO) throws IOException {
-        DeploymentWithDefinitionsDto deploymentWithDefinitionsDto = createTestDeployment(deployTestDTO);
+        DMN dmn = dmnRepository.findByIdOptional(deployTestDTO.dmnId()).orElseThrow();
+        DMNVersion dmnVersion = dmnVersionRepository.findByIdOptional(new DMNVersionId(dmn.getId(), deployTestDTO.version())).orElseThrow();
+
+        DeploymentWithDefinitionsDto deploymentWithDefinitionsDto = createTestDeployment(deployTestDTO, dmn, dmnVersion);
         UnittestResultDTO result = callTestDeployment(deploymentWithDefinitionsDto, deployTestDTO);
+
+        Test unitTest = getTest(deployTestDTO, dmnVersion, result.result());
+        unittestRepository.persist(unitTest);
+
         deleteTestDeployment(deployTestDTO, deploymentWithDefinitionsDto.getId()); // https://github.com/awaitility/awaitility
         return result;
     }
 
-    public DeploymentWithDefinitionsDto createTestDeployment(DeployTestDTO deployTestDTO) throws IOException {
-        DMN dmn = dmnRepository.findByIdOptional(deployTestDTO.dmnId()).orElseThrow();
-        DMNVersion dmnVersion = dmnVersionRepository.findByIdOptional(new DMNVersionId(dmn.getId(), deployTestDTO.version())).orElseThrow();
+    private DeploymentWithDefinitionsDto createTestDeployment(DeployTestDTO deployTestDTO, DMN dmn, DMNVersion dmnVersion) throws IOException {
         Environment test_env = Environment.find("name", "test").firstResult();
 
         DeployDTO deploymentData = new DeployDTO(
@@ -74,18 +79,15 @@ public class UnitTestService {
 
         var form = DmnDeploymentService.getCreateDeploymentMultipartForm(deploymentData, dmnVersion.getFileBlob());
         DeploymentApi unitTestClient = RestClientBuilder.newBuilder().baseUri(unitTestUrl + "/engine-rest").build(DeploymentApi.class);
-        DeploymentWithDefinitionsDto deploymentWithDefinitionsDto = unitTestClient.createDeployment(form);
-        Test unitTest = getTest(deployTestDTO, dmnVersion);
-        unittestRepository.persist(unitTest);
-
-        return deploymentWithDefinitionsDto;
+        return unitTestClient.createDeployment(form);
     }
 
-    private static Test getTest(DeployTestDTO deployTestDTO, DMNVersion dmnVersion) {
+    private static Test getTest(DeployTestDTO deployTestDTO, DMNVersion dmnVersion, boolean passed) {
         Test unitTest = new Test();
         unitTest.setDecisionName(deployTestDTO.decisionName());
         unitTest.setTitle(deployTestDTO.title());
         unitTest.setDmnVersion(dmnVersion);
+        unitTest.setPassed(passed);
         List<KeyValue> values = new ArrayList<>();
 
         for (DeployTestDTO.ParamDTO param : deployTestDTO.inputData()) {
@@ -132,15 +134,10 @@ public class UnitTestService {
             List<Map<String, VariableValueDto>> result = unitTestClient.evaluateDecisionById(decisionDefinitionId, evaluateDecisionDto);
 
             String responseBody = objectMapper.writeValueAsString(result);
-            boolean passed = compareDMNResponse(buildOutputJSON(deployTestDTO.outputData()), responseBody);
-            Test unitTest = unittestRepository.find("decisionName = ?1 AND dmnVersion.dmn.id = ?2 AND dmnVersion.version = ?3",
-                    deployTestDTO.decisionName(),
-                    deployTestDTO.dmnId(),
-                    deployTestDTO.version()).firstResult();
-            unitTest.setPassed(passed);
-            unittestRepository.persist(unitTest);
+            String expected = buildOutputJSON(deployTestDTO.outputData());
+            boolean passed = compareDMNResponse(expected, responseBody);
 
-            return new UnittestResultDTO(passed, buildOutputJSON(deployTestDTO.outputData()), responseBody);
+            return new UnittestResultDTO(passed, expected, responseBody);
         } catch (Exception e) {
             throw new RuntimeException(e);
          }
