@@ -54,8 +54,35 @@ services:
         - ./postgres:/docker-entrypoint-initdb.d
         - postgres-dmn-studio-data:/var/lib/postgresql/data
 
+  operaton:
+    image: operaton/operaton
+    environment:
+      DB_DRIVER: org.postgresql.Driver
+      DB_URL: jdbc:postgresql://postgres-operaton:5432/operaton
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgrespassword
+      WAIT_FOR: postgres-operaton:5432
+    ports:
+      - "8085:8080"
+    depends_on:
+      - postgres-operaton
+
+  postgres-operaton:
+    image: postgres:15
+    container_name: postgres-operaton
+    environment:
+      - POSTGRES_DB=operaton
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgrespassword
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres-operaton-data:/var/lib/postgresql/data
+
 volumes:
   postgres-keycloak-data:
     driver: local
   postgres-dmn-studio-data:
+    driver: local
+  postgres-operaton-data:
     driver: local
