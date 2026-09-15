@@ -198,18 +198,19 @@ docker-compose up -d
 
 The following configuration properties are available for development:
 
-| Property | Description | Default/Example Value |
-|----------|-------------|----------------------|
-| `quarkus.datasource.username` | PostgreSQL database username | `postgres` |
-| `quarkus.datasource.password` | PostgreSQL database password | `postgrespassword` |
-| `quarkus.datasource.jdbc.url` | JDBC connection URL for PostgreSQL | `jdbc:postgresql://localhost:5434/dmn-studio` |
-| `quarkus.oidc.client-id` | Keycloak OIDC client identifier | `quarkus-backend` |
-| `quarkus.oidc.credentials.secret` | Keycloak client secret for authentication | `YsVBOJj2avKCn7erFaNKaWdMmGXbjGgY` |
-| `quarkus.oidc.auth-server-url` | Keycloak authentication server URL | `http://localhost:8181/realms/dmn_studio` |
-| `quarkus.rest-client.operaton_rest_api_json.url` | Operaton workflow engine REST API endpoint | `http://localhost:8085/engine-rest` |
+| Property                                                                    | Description | Default/Example Value |
+|-----------------------------------------------------------------------------|-------------|----------------------|
+| `quarkus.datasource.username`                                               | PostgreSQL database username | `postgres` |
+| `quarkus.datasource.password`                                               | PostgreSQL database password | `postgrespassword` |
+| `quarkus.datasource.jdbc.url`                                               | JDBC connection URL for PostgreSQL | `jdbc:postgresql://localhost:5434/dmn-studio` |
+| `quarkus.oidc.client-id`                                                    | Keycloak OIDC client identifier | `quarkus-backend` |
+| `quarkus.oidc.credentials.secret`                                           | Keycloak client secret for authentication | `YsVBOJj2avKCn7erFaNKaWdMmGXbjGgY` |
+| `quarkus.oidc.auth-server-url`                                              | Keycloak authentication server URL | `http://localhost:8181/realms/dmn_studio` |
+| `quarkus.rest-client.operaton_rest_api_{test,ut,acc,prod}.url` | Operaton workflow engine base URLs | `http://localhost:8085` |
+| `operaton.context-path` / `OPERATON_CONTEXT_PATH`                            | Context path shared by the Operaton REST endpoints | `/engine-rest` |
 | `quarkus.openapi-generator.operaton-rest-api_json.auth.basic_auth.username` | Basic auth username for Operaton API | `demo` |
 | `quarkus.openapi-generator.operaton-rest-api_json.auth.basic_auth.password` | Basic auth password for Operaton API | `demo` |
-| `quarkus.rest-client.keycloak-api.url` | Keycloak Admin API base URL | `http://localhost:8181` |
+| `quarkus.rest-client.keycloak-api.url`                                      | Keycloak Admin API base URL | `http://localhost:8181` |
 
 
 
