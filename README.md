@@ -155,7 +155,36 @@ volumes:
     driver: local
 ```
 
-**Note**: This example includes the PostgreSQL database. You will need to provide external Keycloak and Operaton services, or add them to this compose file. For a complete development environment including Keycloak, see `src/test/resources/docker/docker-compose.yaml`.
+**Note**: This example includes the PostgreSQL database. You will need to provide external Keycloak and Operaton services, or add them to this compose file.
+For a complete development environment including Keycloak, see `src/test/resources/docker/docker-compose.yaml`.
+
+### Keycloak setup
+
+- Log in to Keycloak at <http://localhost:8181> (`admin` / `admin` as the username and password).
+- In the `dmn_studio` realm, go to **Clients > dmn-studio** and verify the following settings:
+  - **Client Authentication**: On
+  - **Service account roles**: Checked
+  - Go to **Service account roles > Assign roles > Realm roles** and add all roles.
+  - Go to **Service account roles > Assign roles > Client roles** and add all roles. **Note:** Unless you display 100 roles per page, you will need to repeat this about three times.
+  - Under **Service account roles**, verify that the total number of roles is 39.
+- Create a user of your choice and assign the `dmn_studio_*` roles required for access.
+
+### Calling the API
+
+Create an access token:
+
+- Send a `POST` request to <http://localhost:8181/realms/dmn_studio/protocol/openid-connect/token>.
+- Use an `application/x-www-form-urlencoded` request body with the following values:
+  - `grant_type`: `client_credentials`
+  - `client_id`: `dmn-studio`
+  - `client_secret`: `YsVBOJj2avKCn7erFaNKaWdMmGXbjGgY`
+- Use the returned `access_token` to authenticate API requests.
+
+Call the backend:
+
+- The available endpoints can be found at <http://localhost:8080/api/q/dev-ui/endpoints>.
+- Include the following header:
+  - `Authorization: Bearer <access_token>`
 
 ### Starting the Services
 
