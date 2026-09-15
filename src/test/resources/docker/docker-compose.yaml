@@ -51,8 +51,7 @@ services:
     ports:
       - "5434:5432"
     volumes:
-        - ./postgres:/docker-entrypoint-initdb.d
-        - postgres-dmn-studio-data:/var/lib/postgresql/data
+      - postgres-dmn-studio-data:/var/lib/postgresql/data
 
   operaton:
     image: operaton/operaton
