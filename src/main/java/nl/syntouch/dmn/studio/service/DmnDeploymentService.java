@@ -45,6 +45,9 @@ public class DmnDeploymentService {
     @ConfigProperty(name = "quarkus.rest-client.operaton_rest_api_prod.url")
     String prodUrl;
 
+    @ConfigProperty(name = "operaton.context-path")
+    String contextPath;
+
     private final SecurityIdentity identity;
     private final DmnRepository dmnRepository;
     private final DmnVersionRepository dmnVersionRepository;
@@ -61,7 +64,7 @@ public class DmnDeploymentService {
         } else {
             throw new NotFoundException("Environment not found");
         }
-        return envUrl + "/engine-rest";
+        return envUrl + contextPath;
     }
 
     @Transactional

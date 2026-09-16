@@ -41,6 +41,9 @@ public class UnitTestService {
     @ConfigProperty(name = "quarkus.rest-client.operaton_rest_api_ut.url")
     String unitTestUrl;
 
+    @ConfigProperty(name = "operaton.context-path")
+    String contextPath;
+
     private final SecurityIdentity identity;
     private final DmnRepository dmnRepository;
     private final DmnVersionRepository dmnVersionRepository;
@@ -78,7 +81,7 @@ public class UnitTestService {
         );
 
         var form = DmnDeploymentService.getCreateDeploymentMultipartForm(deploymentData, dmnVersion.getFileBlob());
-        DeploymentApi unitTestClient = RestClientBuilder.newBuilder().baseUri(unitTestUrl + "/engine-rest").build(DeploymentApi.class);
+        DeploymentApi unitTestClient = RestClientBuilder.newBuilder().baseUri(unitTestUrl + contextPath).build(DeploymentApi.class);
         return unitTestClient.createDeployment(form);
     }
 
@@ -127,7 +130,7 @@ public class UnitTestService {
 
         try {
             DecisionDefinitionApi unitTestClient = RestClientBuilder.newBuilder()
-                    .baseUri(URI.create(unitTestUrl + "/engine-rest"))
+                    .baseUri(URI.create(unitTestUrl + contextPath))
                     .build(DecisionDefinitionApi.class);
 
             EvaluateDecisionDto evaluateDecisionDto = buildEvaluateDecisionDto(deployTestDTO.inputData());
@@ -177,7 +180,7 @@ public class UnitTestService {
 
     public void deleteTestDeployment(DeployTestDTO deployTestDTO, String deploymentId) {
         try {
-            DeploymentApi unitTestClient = RestClientBuilder.newBuilder().baseUri(unitTestUrl + "/engine-rest").build(DeploymentApi.class);
+            DeploymentApi unitTestClient = RestClientBuilder.newBuilder().baseUri(unitTestUrl + contextPath).build(DeploymentApi.class);
             unitTestClient.deleteDeployment(deploymentId, true, true, true);
         } catch (Exception e) {
             throw new RuntimeException(e);
