@@ -37,7 +37,7 @@ public class DmnResource {
     @GET
     @RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_APPROVER, ROLE_DEPLOYER, ROLE_READ})
     public Response getDMNs() {
-        List<DMN> dmns = dmnService.getDMNs();
+        List<DMNResponseDTO> dmns = dmnService.getDMNs();
         return Response.ok(dmns).build();
     }
 

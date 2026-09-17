@@ -38,7 +38,7 @@ public class AuthResource {
     @Path("/user/{username}")
     @RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_APPROVER, ROLE_DEPLOYER})
     public Response getUserByUsername(@PathParam("username") String username) {
-        UserRepresentation user = keycloakService.getUserByUsername(username);
+        UserRepresentation user = keycloakService.getUserByUsername(username).orElse(null);
         return Response.ok(user).build();
     }
 
