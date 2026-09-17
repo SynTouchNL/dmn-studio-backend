@@ -60,6 +60,6 @@ public class DmnService {
     private String getOwnerDisplayName(String ownerId) {
         return keycloakService.getUserById(ownerId)
                 .map(owner -> owner.getFirstName() + " " + owner.getLastName())
-                .orElse("Onbekende eigenaar");
+                .orElse(ownerId); // previously used username as owner, so ownerId will be username
     }
 }
