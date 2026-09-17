@@ -164,7 +164,6 @@ For a complete development environment including Keycloak, see `src/test/resourc
 - In the `dmn_studio` realm, go to **Clients > dmn-studio** and verify the following settings:
   - **Client Authentication**: On
   - **Service account roles**: Checked
-  - Go to **Service account roles > Assign roles > Realm roles** and add all roles.
   - Go to **Service account roles > Assign roles > Client roles** and add all roles. **Note:** Unless you display 100 roles per page, you will need to repeat this about three times.
   - Under **Service account roles**, verify that the total number of roles is 39.
 - Create a user of your choice and assign the `dmn_studio_*` roles required for access.
