@@ -8,12 +8,15 @@ import jakarta.ws.rs.NotFoundException;
 import nl.syntouch.dmn.studio.model.DMN;
 import nl.syntouch.dmn.studio.model.Domain;
 import nl.syntouch.dmn.studio.model.dto.DMNCreateDTO;
+import nl.syntouch.dmn.studio.model.dto.DMNResponseDTO;
 import nl.syntouch.dmn.studio.repository.DmnRepository;
 import nl.syntouch.dmn.studio.repository.DomainRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.keycloak.representations.idm.UserRepresentation;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,6 +34,9 @@ class DmnServiceTest {
 
     @InjectMock
     SecurityIdentity securityIdentity;
+
+    @InjectMock
+    KeycloakService keycloakService;
 
     @Inject
     DmnService dmnService;
@@ -50,12 +56,15 @@ class DmnServiceTest {
         mockSecurityIdentity("testUser");
 
         when(domainRepository.findByIdOptional(domainId)).thenReturn(Optional.of(domain));
+        UserRepresentation owner = new UserRepresentation();
+        owner.setId("keycloak-user-id");
+        when(keycloakService.getUserByUsername("Test Owner")).thenReturn(Optional.of(owner));
 
         DMN result = dmnService.createDmn(dmnDTO);
 
         assertNotNull(result);
         assertEquals("Test DMN", result.getName());
-        assertEquals("Test Owner", result.getOwner());
+        assertEquals("keycloak-user-id", result.getOwner());
         assertEquals(domain, result.getDomain());
         assertNotNull(result.getVersions());
         assertEquals(1, result.getVersions().size());
@@ -131,6 +140,27 @@ class DmnServiceTest {
         assertEquals("authenticatedUser", result.getVersions().get(0).getCreatedBy());
     }
 
+    @Test
+    @DisplayName("Should return owner display name without changing persisted owner ID")
+    void getDmnsReturnsOwnerDisplayNameWithoutChangingEntity() {
+        DMN dmn = new DMN();
+        dmn.setId(1L);
+        dmn.setName("Test DMN");
+        dmn.setOwner("keycloak-user-id");
+
+        UserRepresentation owner = new UserRepresentation();
+        owner.setFirstName("Jane");
+        owner.setLastName("Doe");
+
+        when(dmnRepository.listAll()).thenReturn(List.of(dmn));
+        when(keycloakService.getUserById("keycloak-user-id")).thenReturn(Optional.of(owner));
+
+        List<DMNResponseDTO> result = dmnService.getDMNs();
+
+        assertEquals("Jane Doe", result.getFirst().owner());
+        assertEquals("keycloak-user-id", dmn.getOwner());
+    }
+
     private static Domain createDomain(Long id) {
         Domain domain = new Domain();
         domain.setId(id);
@@ -148,4 +178,3 @@ class DmnServiceTest {
         );
     }
 }
-
