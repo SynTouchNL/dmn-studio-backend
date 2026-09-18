@@ -41,6 +41,14 @@ public class DmnResource {
         return Response.ok(dmns).build();
     }
 
+    @GET
+    @Path("/{dmnId}")
+    @RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_APPROVER, ROLE_DEPLOYER, ROLE_READ})
+    public Response getDMN(@PathParam("dmnId") Long dmnId) {
+        DMNResponseDTO dmn = dmnService.getDMN(dmnId);
+        return Response.ok(dmn).build();
+    }
+
     @Path("/{dmnId}/")
     @POST
     @RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_DEPLOYER})
