@@ -57,6 +57,11 @@ public class DmnService {
                 .toList();
     }
 
+    public DMNResponseDTO getDMN(Long dmnId) {
+        DMN dmn = dmnRepository.findByIdOptional(dmnId).orElseThrow(() -> new NotFoundException("DMN not found"));
+        return DMNResponseDTO.from(dmn, getOwnerDisplayName(dmn.getOwner()));
+    }
+
     private String getOwnerDisplayName(String ownerId) {
         return keycloakService.getUserById(ownerId)
                 .map(owner -> owner.getFirstName() + " " + owner.getLastName())
