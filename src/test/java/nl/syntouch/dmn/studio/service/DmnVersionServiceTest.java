@@ -4,7 +4,6 @@ import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 import nl.syntouch.dmn.studio.model.DMN;
 import nl.syntouch.dmn.studio.model.DMNVersion;
@@ -12,13 +11,13 @@ import nl.syntouch.dmn.studio.model.Domain;
 import nl.syntouch.dmn.studio.model.composites.DMNVersionId;
 import nl.syntouch.dmn.studio.model.dto.DMNUpdateFileDTO;
 import nl.syntouch.dmn.studio.model.dto.DMNVersionCreateDTO;
-import nl.syntouch.dmn.studio.model.dto.DMNVersionUpdateDTO;
 import nl.syntouch.dmn.studio.repository.DmnRepository;
 import nl.syntouch.dmn.studio.repository.DmnVersionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,6 +44,12 @@ class DmnVersionServiceTest {
         // Persist a test Domain first (required by DMN)
         Domain testDomain = new Domain();
         testDomain.setName("Test Domain");
+        testDomain.setActive(true);
+        testDomain.setOwner("Test Owner");
+        testDomain.setEditedAt(LocalDateTime.now());
+        testDomain.setCreatedBy("Test User");
+        testDomain.setEditedBy("Test User");
+        testDomain.setCreatedAt(LocalDateTime.now());
         testDomain.persist();
 
         // Persist a test DMN to the database to satisfy foreign key constraints

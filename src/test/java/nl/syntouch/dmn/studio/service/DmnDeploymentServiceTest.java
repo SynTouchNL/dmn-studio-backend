@@ -15,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -45,6 +46,12 @@ class DmnDeploymentServiceTest {
     void setup() {
         Domain testDomain = new Domain();
         testDomain.setName("Test Domain");
+        testDomain.setActive(true);
+        testDomain.setOwner("Test Owner");
+        testDomain.setEditedAt(LocalDateTime.now());
+        testDomain.setCreatedBy("Test User");
+        testDomain.setEditedBy("Test User");
+        testDomain.setCreatedAt(LocalDateTime.now());
         testDomain.persist();
 
         testDmn = new DMN();

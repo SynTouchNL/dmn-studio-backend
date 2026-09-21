@@ -20,6 +20,9 @@ public class Domain extends PanacheEntityBase {
     @Column(length = 45, nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private boolean active = true;
+
     @Column(length = 45, nullable = false)
     private String owner;
 
@@ -35,7 +38,7 @@ public class Domain extends PanacheEntityBase {
     @Column(name = "edited_at", nullable = false)
     private LocalDateTime editedAt = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "domain", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "domain")
     @JsonBackReference
     private List<DMN> dmns;
 

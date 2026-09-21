@@ -63,8 +63,6 @@ public class DmnService {
     }
 
     private String getOwnerDisplayName(String ownerId) {
-        return keycloakService.getUserById(ownerId)
-                .map(owner -> owner.getFirstName() + " " + owner.getLastName())
-                .orElse(ownerId); // previously used username as owner, so ownerId will be username
+        return keycloakService.transformUUIDToUsername(ownerId).orElse(ownerId);
     }
 }
