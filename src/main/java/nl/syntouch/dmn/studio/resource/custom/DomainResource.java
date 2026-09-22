@@ -15,7 +15,6 @@ import java.util.List;
 
 import static nl.syntouch.dmn.studio.DmnStudioConstants.*;
 
-@RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_APPROVER, ROLE_DEPLOYER})
 @Path("/domain")
 @ApplicationScoped
 @RequiredArgsConstructor
@@ -24,12 +23,14 @@ import static nl.syntouch.dmn.studio.DmnStudioConstants.*;
 public class DomainResource {
     private final DomainService service;
 
+    @RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_APPROVER, ROLE_DEPLOYER, ROLE_READ})
     @GET
     public List<DomainResponseDTO> list(@QueryParam("page") @DefaultValue("0") int page,
                                        @QueryParam("size") @DefaultValue("20") int size) {
         return service.list(page, size);
     }
 
+    @RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_APPROVER, ROLE_DEPLOYER, ROLE_READ})
     @GET
     @Path("/{id}")
     public DomainResponseDTO get(@PathParam("id") Long id) { return service.get(id); }
