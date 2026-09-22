@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Getter
@@ -36,7 +37,7 @@ public class Domain extends PanacheEntityBase {
     private LocalDateTime createdAt;
 
     @Column(name = "edited_at", nullable = false)
-    private LocalDateTime editedAt = LocalDateTime.now();
+    private LocalDateTime editedAt = LocalDateTime.now(ZoneId.systemDefault());
 
     @OneToMany(mappedBy = "domain")
     @JsonBackReference

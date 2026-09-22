@@ -3,7 +3,6 @@ package nl.syntouch.dmn.studio.service;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +15,6 @@ import org.keycloak.representations.idm.AbstractUserRepresentation;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
-import java.util.stream.Stream;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 @Transactional
@@ -39,6 +36,7 @@ public class DomainService {
         Domain domain = new Domain();
         domain.setName(normalizeAndEnsureUniqueName(request.name(), null));
         domain.setOwner(findEnabledOwner(request.ownerId()));
+        domain.setActive(request.active());
         domain.setCreatedAt(LocalDateTime.now(ZoneOffset.UTC));
         domain.setCreatedBy(identity.getPrincipal().getName());
         audit(domain);
@@ -49,31 +47,21 @@ public class DomainService {
 
     public DomainResponseDTO update(Long id, DomainRequestDTO request) {
         Domain domain = find(id);
-        requireActive(domain);
+        if (!domain.isActive() && !request.active()) {
+            throw new WebApplicationException("Domain is inactive and read-only", 409);
+        }
 
         domain.setName(normalizeAndEnsureUniqueName(request.name(), id));
         domain.setOwner(findEnabledOwner(request.ownerId()));
+        domain.setActive(request.active());
         audit(domain);
 
         domains.persist(domain);
         return response(domain);
     }
 
-    public DomainResponseDTO setActive(Long id, boolean active) {
-        Domain domain = find(id);
-
-        if (domain.isActive() != active) {
-            domain.setActive(active);
-            audit(domain);
-            domains.persist(domain);
-        }
-
-        return response(domain);
-    }
-
     public void delete(Long id) {
         Domain domain = find(id);
-        requireActive(domain);
         if (dmns.count("domain.id", id) != 0) throw new WebApplicationException("Domain still contains DMNs", 409);
         domains.delete(domain);
     }

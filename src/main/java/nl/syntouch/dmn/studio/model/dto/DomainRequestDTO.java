@@ -11,6 +11,8 @@ public record DomainRequestDTO(
         String name,
         @NotNull(message = "Owner is required")
         @UUID(message = "ownerId must be a UUID")
-        String ownerId
+        String ownerId,
+        @NotNull(message = "Active status is required")
+        Boolean active
 ) {
 }

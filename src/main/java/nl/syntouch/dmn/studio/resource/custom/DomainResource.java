@@ -3,8 +3,6 @@ package nl.syntouch.dmn.studio.resource.custom;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.groups.ConvertGroup;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
@@ -54,13 +52,6 @@ public class DomainResource {
         return service.update(id, request);
     }
 
-    @PUT
-    @Path("/{id}/active")
-    @RolesAllowed(ROLE_ADMIN)
-    public DomainResponseDTO setActive(@PathParam("id") Long id, @Valid Activation request) {
-        return service.setActive(id, request.active());
-    }
-
     @DELETE
     @Path("/{id}")
     @RolesAllowed(ROLE_ADMIN)
@@ -68,7 +59,4 @@ public class DomainResource {
         service.delete(id);
         return Response.noContent().build();
     }
-
-    public record Activation(@NotNull Boolean active) {}
-
 }
