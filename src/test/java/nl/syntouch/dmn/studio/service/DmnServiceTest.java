@@ -148,17 +148,15 @@ class DmnServiceTest {
         dmn.setName("Test DMN");
         dmn.setOwner("keycloak-user-id");
 
-        UserRepresentation owner = new UserRepresentation();
-        owner.setFirstName("Jane");
-        owner.setLastName("Doe");
-
         when(dmnRepository.listAll()).thenReturn(List.of(dmn));
-        when(keycloakService.getUserById("keycloak-user-id")).thenReturn(Optional.of(owner));
+        when(keycloakService.transformUUIDToUsername("keycloak-user-id"))
+                .thenReturn(Optional.of("Jane Doe"));
 
         List<DMNResponseDTO> result = dmnService.getDMNs();
 
         assertEquals("Jane Doe", result.getFirst().owner());
         assertEquals("keycloak-user-id", dmn.getOwner());
+        verify(keycloakService).transformUUIDToUsername("keycloak-user-id");
     }
 
     private static Domain createDomain(Long id) {
