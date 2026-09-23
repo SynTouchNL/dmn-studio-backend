@@ -87,13 +87,51 @@ class DomainServiceTest {
         PanacheQuery<Domain> query = mock();
         when(domainRepository.findAll(any(Sort.class))).thenReturn(query);
         when(query.page(anyInt(), anyInt())).thenReturn(query);
+        when(query.count()).thenReturn(12L);
         when(query.list()).thenReturn(domains);
         when(keycloakService.transformUUIDToUsername(any(String.class)))
                 .thenAnswer(invocation -> Optional.of(invocation.getArgument(0)));
 
         var result = domainService.list(0, 10);
 
-        assertEquals(2, result.size());
+        assertEquals(2, result.items().size());
+        assertEquals(0, result.page());
+        assertEquals(10, result.size());
+        assertEquals(12, result.totalElements());
+        assertEquals(2, result.totalPages());
+        verify(query).page(0, 10);
+    }
+
+    @Test
+    @DisplayName("Should return empty pagination metadata when there are no domains")
+    void listReturnsEmptyPage() {
+        PanacheQuery<Domain> query = mock();
+        when(domainRepository.findAll(any(Sort.class))).thenReturn(query);
+        when(query.page(anyInt(), anyInt())).thenReturn(query);
+        when(query.list()).thenReturn(List.of());
+
+        var result = domainService.list(0, 20);
+
+        assertTrue(result.items().isEmpty());
+        assertEquals(0, result.totalElements());
+        assertEquals(0, result.totalPages());
+    }
+
+    @Test
+    @DisplayName("Should retain the requested page when it is beyond the last page")
+    void listReturnsOutOfRangePage() {
+        PanacheQuery<Domain> query = mock();
+        when(domainRepository.findAll(any(Sort.class))).thenReturn(query);
+        when(query.page(anyInt(), anyInt())).thenReturn(query);
+        when(query.count()).thenReturn(2L);
+        when(query.list()).thenReturn(List.of());
+
+        var result = domainService.list(3, 1);
+
+        assertTrue(result.items().isEmpty());
+        assertEquals(3, result.page());
+        assertEquals(2, result.totalElements());
+        assertEquals(2, result.totalPages());
     }
 
     @ParameterizedTest(name = "page={0}, size={1}")

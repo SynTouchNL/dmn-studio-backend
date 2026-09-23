@@ -9,9 +9,9 @@ import jakarta.ws.rs.core.UriInfo;
 import jakarta.ws.rs.core.Context;
 import lombok.RequiredArgsConstructor;
 import nl.syntouch.dmn.studio.model.dto.DomainRequestDTO;
+import nl.syntouch.dmn.studio.model.dto.DomainPageResponseDTO;
 import nl.syntouch.dmn.studio.model.dto.DomainResponseDTO;
 import nl.syntouch.dmn.studio.service.DomainService;
-import java.util.List;
 
 import static nl.syntouch.dmn.studio.DmnStudioConstants.*;
 
@@ -25,7 +25,7 @@ public class DomainResource {
 
     @RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_APPROVER, ROLE_DEPLOYER, ROLE_READ})
     @GET
-    public List<DomainResponseDTO> list(@QueryParam("page") @DefaultValue("0") int page,
+    public DomainPageResponseDTO list(@QueryParam("page") @DefaultValue("0") int page,
                                        @QueryParam("size") @DefaultValue("20") int size) {
         return service.list(page, size);
     }

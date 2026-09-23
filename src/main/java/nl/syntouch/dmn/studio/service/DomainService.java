@@ -25,9 +25,13 @@ public class DomainService {
     private final KeycloakService keycloak;
     private final SecurityIdentity identity;
 
-    public List<DomainResponseDTO> list(int page, int size) {
+    public DomainPageResponseDTO list(int page, int size) {
         if (page < 0 || size < 1) throw new BadRequestException("Invalid pagination");
-        return domains.findAll(Sort.by("id")).page(page, size).list().stream().map(this::response).toList();
+        var query = domains.findAll(Sort.by("id")).page(page, size);
+        long totalElements = query.count();
+        int totalPages = totalElements == 0 ? 0 : (int) ((totalElements - 1) / size + 1);
+        List<DomainResponseDTO> items = query.list().stream().map(this::response).toList();
+        return new DomainPageResponseDTO(items, page, size, totalElements, totalPages);
     }
 
     public DomainResponseDTO get(Long id) { return response(find(id)); }
