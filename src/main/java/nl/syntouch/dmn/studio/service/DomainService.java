@@ -12,6 +12,7 @@ import nl.syntouch.dmn.studio.repository.DomainRepository;
 import nl.syntouch.dmn.studio.repository.DmnRepository;
 import org.keycloak.representations.idm.AbstractUserRepresentation;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -41,7 +42,7 @@ public class DomainService {
         domain.setName(normalizeAndEnsureUniqueName(request.name(), null));
         domain.setOwner(findEnabledOwner(request.ownerId()));
         domain.setActive(request.active());
-        domain.setCreatedAt(LocalDateTime.now(ZoneOffset.UTC));
+        domain.setCreatedDate(Instant.now());
         domain.setCreatedBy(identity.getPrincipal().getName());
         audit(domain);
 
@@ -76,11 +77,6 @@ public class DomainService {
         return domain;
     }
 
-    public static void requireActive(Domain domain) {
-        if (domain == null) throw new NotFoundException("Domain not found");
-        if (!domain.isActive()) throw new WebApplicationException("Domain is inactive and read-only", 409);
-    }
-
     private String normalizeAndEnsureUniqueName(String value, Long id) {
         String name = value.trim();
         boolean exists = id == null ? domains.count("lower(name) = lower(?1)", name) > 0
@@ -96,14 +92,14 @@ public class DomainService {
     }
 
     private void audit(Domain domain) {
-        domain.setEditedBy(identity.getPrincipal().getName());
-        domain.setEditedAt(LocalDateTime.now(ZoneOffset.UTC));
+        domain.setModifiedBy(identity.getPrincipal().getName());
+        domain.setModifiedDate(Instant.now());
     }
 
     private DomainResponseDTO response(Domain domain) {
         String ownerId = "Onbekend".equals(domain.getOwner()) ? null : domain.getOwner();
         String displayName = ownerId == null ? "Onbekend" : keycloak.transformUUIDToUsername(ownerId).orElse("Onbekende gebruiker");
         return new DomainResponseDTO(domain.getId(), domain.getName(), ownerId, displayName, domain.isActive(),
-                domain.getCreatedBy(), domain.getEditedBy(), domain.getCreatedAt(), domain.getEditedAt());
+                domain.getCreatedBy(), domain.getModifiedBy(), domain.getCreatedDate(), domain.getModifiedDate());
     }
 }

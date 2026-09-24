@@ -17,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -46,10 +47,10 @@ class DmnVersionServiceTest {
         testDomain.setName("Test Domain");
         testDomain.setActive(true);
         testDomain.setOwner("Test Owner");
-        testDomain.setEditedAt(LocalDateTime.now());
+        testDomain.setModifiedDate(Instant.now());
         testDomain.setCreatedBy("Test User");
-        testDomain.setEditedBy("Test User");
-        testDomain.setCreatedAt(LocalDateTime.now());
+        testDomain.setModifiedBy("Test User");
+        testDomain.setCreatedDate(Instant.now());
         testDomain.persist();
 
         // Persist a test DMN to the database to satisfy foreign key constraints

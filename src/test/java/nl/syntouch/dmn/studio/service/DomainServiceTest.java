@@ -20,6 +20,7 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.mockito.ArgumentCaptor;
 
 import java.security.Principal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -65,18 +66,18 @@ class DomainServiceTest {
         domain1.setOwner("Owner 1");
         domain1.setActive(true);
         domain1.setCreatedBy("User 1");
-        domain1.setEditedBy("User 1");
-        domain1.setCreatedAt(LocalDateTime.now());
-        domain1.setEditedAt(LocalDateTime.now());
+        domain1.setModifiedBy("User 1");
+        domain1.setCreatedDate(Instant.now());
+        domain1.setModifiedDate(Instant.now());
 
         var domain2 = new Domain();
         domain2.setName("Domain 2");
         domain2.setOwner("Owner 2");
         domain2.setActive(false);
         domain2.setCreatedBy("User 2");
-        domain2.setEditedBy("User 2");
-        domain2.setCreatedAt(LocalDateTime.now());
-        domain2.setEditedAt(LocalDateTime.now());
+        domain2.setModifiedBy("User 2");
+        domain2.setCreatedDate(Instant.now());
+        domain2.setModifiedDate(Instant.now());
 
         domains = List.of(domain1, domain2);
     }
@@ -184,9 +185,9 @@ class DomainServiceTest {
         assertEquals("New Domain", persistedDomain.getName());
         assertEquals("owner-id", persistedDomain.getOwner());
         assertEquals("authenticated-user", persistedDomain.getCreatedBy());
-        assertEquals("authenticated-user", persistedDomain.getEditedBy());
-        assertNotNull(persistedDomain.getCreatedAt());
-        assertNotNull(persistedDomain.getEditedAt());
+        assertEquals("authenticated-user", persistedDomain.getModifiedBy());
+        assertNotNull(persistedDomain.getCreatedDate());
+        assertNotNull(persistedDomain.getModifiedDate());
         assertFalse(persistedDomain.isActive());
         assertEquals("New Domain", result.name());
         assertEquals("owner-id", result.ownerId());
@@ -221,7 +222,7 @@ class DomainServiceTest {
         assertEquals("Updated Domain", domain.getName());
         assertEquals("new-owner-id", domain.getOwner());
         assertEquals(requestedActive, domain.isActive());
-        assertEquals("updating-user", domain.getEditedBy());
+        assertEquals("updating-user", domain.getModifiedBy());
         assertEquals(requestedActive, result.active());
         verify(domainRepository).persist(domain);
     }

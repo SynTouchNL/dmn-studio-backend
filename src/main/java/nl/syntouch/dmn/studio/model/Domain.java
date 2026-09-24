@@ -5,7 +5,9 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -30,14 +32,14 @@ public class Domain extends PanacheEntityBase {
     @Column(name = "created_by", length = 45, nullable = false)
     private String createdBy;
 
-    @Column(name = "edited_by", length = 45, nullable = false)
-    private String editedBy;
+    @Column(name = "modified_by", length = 45, nullable = false)
+    private String modifiedBy;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "created_date", nullable = false)
+    private Instant createdDate;
 
-    @Column(name = "edited_at", nullable = false)
-    private LocalDateTime editedAt = LocalDateTime.now(ZoneId.systemDefault());
+    @Column(name = "modified_date", nullable = false)
+    private Instant modifiedDate = Instant.now();
 
     @OneToMany(mappedBy = "domain")
     @JsonBackReference
