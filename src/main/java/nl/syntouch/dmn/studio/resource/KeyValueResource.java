@@ -7,5 +7,5 @@ import nl.syntouch.dmn.studio.model.KeyValue;
 import static nl.syntouch.dmn.studio.DmnStudioConstants.*;
 
 @RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_APPROVER, ROLE_DEPLOYER})
-public interface KeyValueResource extends PanacheEntityResource<KeyValue, Integer> {
+public interface KeyValueResource extends PanacheEntityResource<KeyValue, Long> {
 }

@@ -103,4 +103,9 @@ public class KeycloakService {
 
         return Optional.of(user);
     }
+
+    public Optional<String> transformUUIDToUsername(String id) {
+       return getUserById(id)
+                .map(owner -> owner.getFirstName() + " " + owner.getLastName());
+    }
 }
