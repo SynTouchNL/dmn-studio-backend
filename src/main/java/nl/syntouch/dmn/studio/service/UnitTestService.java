@@ -82,7 +82,11 @@ public class UnitTestService {
 
         var form = DmnDeploymentService.getCreateDeploymentMultipartForm(deploymentData, dmnVersion.getFileBlob());
         DeploymentApi unitTestClient = RestClientBuilder.newBuilder().baseUri(unitTestUrl + contextPath).build(DeploymentApi.class);
-        return unitTestClient.createDeployment(form);
+        try {
+            return unitTestClient.createDeployment(form);
+        } finally {
+            DmnDeploymentService.deleteTempFile(form.data);
+        }
     }
 
     private static Test getTest(DeployTestDTO deployTestDTO, DMNVersion dmnVersion, boolean passed) {

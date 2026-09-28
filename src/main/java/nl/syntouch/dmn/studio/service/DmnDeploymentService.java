@@ -3,7 +3,10 @@ package nl.syntouch.dmn.studio.service;
 import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.WebApplicationException;
 import lombok.RequiredArgsConstructor;
 import nl.syntouch.dmn.studio.model.DMN;
 import nl.syntouch.dmn.studio.model.DMNVersion;
@@ -17,7 +20,7 @@ import nl.syntouch.dmn.studio.repository.DmnRepository;
 import nl.syntouch.dmn.studio.repository.DmnVersionRepository;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.logging.Logger;
 import org.openapi.quarkus.operaton_rest_api_json.api.DeploymentApi;
 import org.openapi.quarkus.operaton_rest_api_json.model.DeploymentWithDefinitionsDto;
 
@@ -33,8 +36,7 @@ import java.util.Optional;
 @ApplicationScoped
 public class DmnDeploymentService {
 
-    @RestClient
-    DeploymentApi deploymentApi;
+    private static final Logger LOG = Logger.getLogger(DmnDeploymentService.class);
 
     @ConfigProperty(name = "quarkus.rest-client.operaton_rest_api_test.url")
     String testUrl;
@@ -81,10 +83,34 @@ public class DmnDeploymentService {
         try {
             DeploymentWithDefinitionsDto deploymentWithDefinitionsDto = customClient.createDeployment(form);
             Deployment deployment = getDeployment(deployDTO, dmnVersion, deploymentWithDefinitionsDto);
-            deploymentRepository.persist(deployment);
+            persistDeploymentOrCompensate(customClient, deployment, deploymentWithDefinitionsDto.getId());
             return deploymentWithDefinitionsDto;
         } catch (Exception e) {
             throw new IOException("Kan DMN niet deployen: " + e.getMessage());
+        } finally {
+            deleteTempFile(form.data);
+        }
+    }
+
+    private void persistDeploymentOrCompensate(DeploymentApi customClient, Deployment deployment,
+                                               String remoteDeploymentId) throws IOException {
+        try {
+            deploymentRepository.persistAndFlush(deployment);
+        } catch (Exception persistenceException) {
+            try {
+                customClient.deleteDeployment(remoteDeploymentId, true, true, true);
+            } catch (Exception compensationException) {
+                persistenceException.addSuppressed(compensationException);
+                LOG.errorf(compensationException,
+                        "Could not remove Operaton deployment %s after local persistence failed",
+                        remoteDeploymentId);
+                throw new IOException(
+                        "DMN is deployed in Operaton, but could not be stored locally or rolled back",
+                        persistenceException);
+            }
+            throw new IOException(
+                    "DMN deployment was rolled back because it could not be stored locally",
+                    persistenceException);
         }
     }
 
@@ -112,8 +138,21 @@ public class DmnDeploymentService {
 
     private static File getFile(byte[] data) throws IOException {
         var tempFile = Files.createTempFile("deployment-", ".dmn").toFile();
-        Files.write(tempFile.toPath(), data);
-        return tempFile;
+        try {
+            Files.write(tempFile.toPath(), data);
+            return tempFile;
+        } catch (IOException e) {
+            deleteTempFile(tempFile);
+            throw e;
+        }
+    }
+
+    static void deleteTempFile(File tempFile) {
+        try {
+            Files.deleteIfExists(tempFile.toPath());
+        } catch (IOException e) {
+            LOG.warnf(e, "Could not delete temporary DMN file %s", tempFile);
+        }
     }
 
     public void deleteDeployment(Long deploymentId, Long envId) throws NotFoundException {
@@ -122,15 +161,27 @@ public class DmnDeploymentService {
             throw new NotFoundException("Deployment not found in local database");
         }
         String deploymentRef = deploymentFound.getDeploymentRef();
+        Long deployedEnvironmentId = deploymentFound.getDeployedTo().getId();
+        if (!Objects.equals(envId, deployedEnvironmentId)) {
+            throw new BadRequestException("Deployment belongs to environment " + deployedEnvironmentId);
+        }
 
         DeploymentApi customClient = RestClientBuilder.newBuilder()
-                .baseUri(selectUrl(envId))
+                .baseUri(selectUrl(deployedEnvironmentId))
                 .build(DeploymentApi.class);
         try {
             customClient.deleteDeployment(deploymentRef, true, true, true);
-
-        } catch (Exception e) {
-            throw new NotFoundException("Deployment not found in target environment");
+        } catch (WebApplicationException e) {
+            int status = e.getResponse().getStatus();
+            if (status == 404) {
+                throw new NotFoundException("Deployment not found in target environment", e);
+            }
+            throw new WebApplicationException(
+                    "Operaton rejected deployment deletion with HTTP status " + status,
+                    e,
+                    status);
+        } catch (ProcessingException e) {
+            throw new WebApplicationException("Target Operaton environment is unavailable", e, 503);
         }
         deploymentRepository.delete(deploymentFound);
     }
