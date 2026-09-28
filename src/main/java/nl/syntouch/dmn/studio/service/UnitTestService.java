@@ -18,7 +18,6 @@ import nl.syntouch.dmn.studio.model.dto.UnittestResultDTO;
 import nl.syntouch.dmn.studio.repository.UnittestRepository;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.openapi.quarkus.operaton_rest_api_json.api.DeploymentApi;
 import org.openapi.quarkus.operaton_rest_api_json.model.DeploymentWithDefinitionsDto;
 import nl.syntouch.dmn.studio.repository.DmnRepository;
@@ -35,9 +34,6 @@ import java.util.*;
 @RequiredArgsConstructor
 @ApplicationScoped
 public class UnitTestService {
-    @RestClient
-    DeploymentApi deploymentApi;
-
     @ConfigProperty(name = "quarkus.rest-client.operaton_rest_api_ut.url")
     String unitTestUrl;
 
@@ -55,13 +51,16 @@ public class UnitTestService {
         DMNVersion dmnVersion = dmnVersionRepository.findByIdOptional(new DMNVersionId(dmn.getId(), deployTestDTO.version())).orElseThrow();
 
         DeploymentWithDefinitionsDto deploymentWithDefinitionsDto = createTestDeployment(deployTestDTO, dmn, dmnVersion);
-        UnittestResultDTO result = callTestDeployment(deploymentWithDefinitionsDto, deployTestDTO);
+        try {
+            UnittestResultDTO result = callTestDeployment(deploymentWithDefinitionsDto, deployTestDTO);
 
-        Test unitTest = getTest(deployTestDTO, dmnVersion, result.result());
-        unittestRepository.persist(unitTest);
+            Test unitTest = getTest(deployTestDTO, dmnVersion, result.result());
+            unittestRepository.persist(unitTest);
 
-        deleteTestDeployment(deployTestDTO, deploymentWithDefinitionsDto.getId()); // https://github.com/awaitility/awaitility
-        return result;
+            return result;
+        } finally {
+            deleteTestDeployment(deploymentWithDefinitionsDto.getId());
+        }
     }
 
     private DeploymentWithDefinitionsDto createTestDeployment(DeployTestDTO deployTestDTO, DMN dmn, DMNVersion dmnVersion) throws IOException {
@@ -182,7 +181,7 @@ public class UnitTestService {
         return expectedArray.equals(actualArray);
     }
 
-    public void deleteTestDeployment(DeployTestDTO deployTestDTO, String deploymentId) {
+    public void deleteTestDeployment(String deploymentId) {
         try {
             DeploymentApi unitTestClient = RestClientBuilder.newBuilder().baseUri(unitTestUrl + contextPath).build(DeploymentApi.class);
             unitTestClient.deleteDeployment(deploymentId, true, true, true);
