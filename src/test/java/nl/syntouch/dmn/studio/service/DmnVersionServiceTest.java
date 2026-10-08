@@ -1,5 +1,6 @@
 package nl.syntouch.dmn.studio.service;
 
+import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.security.Principal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -33,6 +35,9 @@ class DmnVersionServiceTest {
 
     @InjectMock
     DmnVersionRepository dmnVersionRepository;
+
+    @InjectMock
+    SecurityIdentity securityIdentity;
 
     @Inject
     DmnVersionService dmnVersionService;
@@ -61,12 +66,19 @@ class DmnVersionServiceTest {
         testDmn.persist();
     }
 
+    private void loginAs(String username) {
+        Principal principal = mock();
+        when(principal.getName()).thenReturn(username);
+        when(securityIdentity.getPrincipal()).thenReturn(principal);
+    }
+
     @Test
     @DisplayName("Should create new version when DMN exists")
     void addVersionCreatesNewVersionWhenDmnExists() {
         Long dmnId = 1L;
         DMN dmn = new DMN();
         DMNVersionCreateDTO versionDTO = createVersionCreateDTO(dmnId, "createdBy");
+        loginAs("createdBy");
         when(dmnRepository.findByIdOptional(dmnId)).thenReturn(Optional.of(dmn));
         when(dmnVersionRepository.getNextVersion(dmnId)).thenReturn(2L);
 
@@ -123,6 +135,7 @@ class DmnVersionServiceTest {
         Long versionId = 1L;
         DMNVersion dmnVersion = createDmnVersion(versionId, 2L);
         DMNUpdateFileDTO versionDTO = createUpdateFileDTO("modifiedBy");
+        loginAs("modifiedBy");
         when(dmnVersionRepository.findByIdOptional(new DMNVersionId(testDmn.getId(), versionId)))
                 .thenReturn(Optional.of(dmnVersion));
 
