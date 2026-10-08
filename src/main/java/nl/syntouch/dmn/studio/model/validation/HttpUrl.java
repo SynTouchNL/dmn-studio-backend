@@ -16,7 +16,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * An absolute http(s) URL with a host, e.g. {@code https://engine.example.com/engine-rest}.
  */
-@URL(regexp = "^https?://[^\\s/?#]+[^\\s]*$", flags = Pattern.Flag.CASE_INSENSITIVE)
+@URL(regexp = "^https?://[^\\s/?#]+([/?#]\\S*)?$", flags = Pattern.Flag.CASE_INSENSITIVE)
 @ReportAsSingleViolation
 @Constraint(validatedBy = {})
 @Documented

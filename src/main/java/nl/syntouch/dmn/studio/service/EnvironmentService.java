@@ -126,7 +126,9 @@ public class EnvironmentService {
     }
 
     private static String normalizeUrl(String url) {
-        return url.replaceAll("/+$", "");
+        int end = url.length();
+        while (end > 0 && url.charAt(end - 1) == '/') end--;
+        return url.substring(0, end);
     }
 
     private void applyCredentials(Environment environment, String requestedUsername, String requestedPassword) {
