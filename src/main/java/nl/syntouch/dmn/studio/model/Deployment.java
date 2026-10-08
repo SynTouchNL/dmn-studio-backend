@@ -28,7 +28,7 @@ public class Deployment extends PanacheEntityBase {
 
     @JsonBackReference("deployments")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "environment_id", nullable = false)
+    @JoinColumn(name = "environment_id")
     private Environment deployedTo;
 
     @Column(name = "deployed_by", nullable = false)
