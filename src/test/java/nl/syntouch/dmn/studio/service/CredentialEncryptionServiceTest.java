@@ -1,5 +1,6 @@
 package nl.syntouch.dmn.studio.service;
 
+import jakarta.ws.rs.WebApplicationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +39,7 @@ class CredentialEncryptionServiceTest {
         payload[payload.length - 1] ^= 1;
         String tampered = "v1:" + Base64.getEncoder().encodeToString(payload);
 
-        assertThrows(IllegalStateException.class, () -> service.decrypt(tampered));
+        assertThrows(WebApplicationException.class, () -> service.decrypt(tampered));
     }
 
     @Test
@@ -48,7 +49,7 @@ class CredentialEncryptionServiceTest {
         otherKey[0] = 1;
         var other = new CredentialEncryptionService(Optional.of(Base64.getEncoder().encodeToString(otherKey)));
 
-        assertThrows(IllegalStateException.class, () -> other.decrypt(service.encrypt("secret")));
+        assertThrows(WebApplicationException.class, () -> other.decrypt(service.encrypt("secret")));
     }
 
     @Test
@@ -70,7 +71,7 @@ class CredentialEncryptionServiceTest {
     void missingKeyDisablesEncryption() {
         var unconfigured = new CredentialEncryptionService(Optional.empty());
 
-        assertFalse(unconfigured.isConfigured());
-        assertThrows(IllegalStateException.class, () -> unconfigured.encrypt("secret"));
+        var exception = assertThrows(WebApplicationException.class, () -> unconfigured.encrypt("secret"));
+        assertEquals(500, exception.getResponse().getStatus());
     }
 }

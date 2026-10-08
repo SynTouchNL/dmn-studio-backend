@@ -14,7 +14,6 @@ import org.openapi.quarkus.operaton_rest_api_json.api.DeploymentApi;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 
@@ -24,41 +23,31 @@ public class OperatonClientFactory {
     private final CredentialEncryptionService encryption;
 
     public DeploymentApi deploymentApi(Environment environment) {
-        if (environment.getUrl() == null || environment.getUrl().isBlank()) {
+        if (environment.getUrl() == null) {
             throw new WebApplicationException("Environment '%s' has no URL configured".formatted(environment.getName()), 409);
         }
-        return deploymentApi(environment.getUrl(), environment.getUsername(), storedPassword(environment), null);
+        return builder(environment.getUrl(), environment.getUsername(), storedPassword(environment))
+                .build(DeploymentApi.class);
     }
 
-    public DeploymentApi deploymentApi(String url, String username, String password, Timeouts timeouts) {
-        RestClientBuilder builder = RestClientBuilder.newBuilder()
-                .baseUri(URI.create(url))
-                .register(new BasicAuthFilter(username, password), Priorities.AUTHENTICATION + 100);
-        if (timeouts != null) {
-            builder.connectTimeout(timeouts.connect().toMillis(), TimeUnit.MILLISECONDS)
-                    .readTimeout(timeouts.read().toMillis(), TimeUnit.MILLISECONDS);
-        }
-        return builder.build(DeploymentApi.class);
+    public DeploymentApi connectionTestApi(String url, String username, String password) {
+        return builder(url, username, password)
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .build(DeploymentApi.class);
     }
 
     public String storedPassword(Environment environment) {
-        if (environment.getPasswordEncrypted() == null) {
-            return null;
-        }
-        if (!encryption.isConfigured()) {
-            throw new WebApplicationException("Encryption key is not configured (DMN_STUDIO_ENCRYPTION_KEY)", 500);
-        }
-        try {
-            return encryption.decrypt(environment.getPasswordEncrypted());
-        } catch (IllegalStateException e) {
-            throw new WebApplicationException(
-                    "Stored password of environment '%s' could not be decrypted; re-enter it".formatted(environment.getName()), e, 500);
-        }
+        return environment.getPasswordEncrypted() == null ? null : encryption.decrypt(environment.getPasswordEncrypted());
     }
 
-    public record Timeouts(Duration connect, Duration read) {}
+    private static RestClientBuilder builder(String url, String username, String password) {
+        return RestClientBuilder.newBuilder()
+                .baseUri(URI.create(url))
+                .register(new BasicAuthFilter(username, password), Priorities.AUTHENTICATION + 100);
+    }
 
-    static final class BasicAuthFilter implements ClientRequestFilter {
+    private static final class BasicAuthFilter implements ClientRequestFilter {
         private final String header;
 
         BasicAuthFilter(String username, String password) {

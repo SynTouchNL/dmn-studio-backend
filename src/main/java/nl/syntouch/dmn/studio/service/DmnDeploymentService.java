@@ -185,14 +185,7 @@ public class DmnDeploymentService {
         Deployment foundDeployment = foundDeploymentOpt.orElseThrow(() -> new NotFoundException("Deployment not found"));
         DMN foundDmn = foundDeployment.getVersion().getDmn();
 
-        DeploymentDMNDTO.DMNVersionSubDTO subDTO = new DeploymentDMNDTO.DMNVersionSubDTO(
-                foundDeployment.getVersion().getVersion(),
-                foundDeployment.getVersion().getStatus(),
-                foundDeployment.getVersion().getModifiedBy(),
-                foundDeployment.getVersion().getModifiedDate(),
-                foundDeployment.getVersion().getCreatedBy(),
-                foundDeployment.getVersion().getCreatedDate()
-        );
+        DeploymentDMNDTO.DMNVersionSubDTO subDTO = DeploymentDMNDTO.DMNVersionSubDTO.from(foundDeployment.getVersion());
         return new DeploymentDMNDTO(
                 foundDeployment.getId(),
                 foundDmn.getId(),
@@ -209,14 +202,7 @@ public class DmnDeploymentService {
         List<Deployment> deployments = Deployment.listAll();
         return deployments.stream().map(deployment -> {
             DMN dmn = deployment.getVersion().getDmn();
-            DeploymentDMNDTO.DMNVersionSubDTO subDTO = new DeploymentDMNDTO.DMNVersionSubDTO(
-                    deployment.getVersion().getVersion(),
-                    deployment.getVersion().getStatus(),
-                    deployment.getVersion().getModifiedBy(),
-                    deployment.getVersion().getModifiedDate(),
-                    deployment.getVersion().getCreatedBy(),
-                    deployment.getVersion().getCreatedDate()
-            );
+            DeploymentDMNDTO.DMNVersionSubDTO subDTO = DeploymentDMNDTO.DMNVersionSubDTO.from(deployment.getVersion());
             return new DeploymentDMNDTO(
                     deployment.getId(),
                     dmn.getId(),

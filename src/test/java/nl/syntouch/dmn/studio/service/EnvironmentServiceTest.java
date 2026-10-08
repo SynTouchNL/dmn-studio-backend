@@ -4,12 +4,12 @@ import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
+import jakarta.validation.Validator;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.WebApplicationException;
 import nl.syntouch.dmn.studio.model.Environment;
 import nl.syntouch.dmn.studio.model.dto.EnvironmentRequestDTO;
-import nl.syntouch.dmn.studio.repository.DeploymentRepository;
 import nl.syntouch.dmn.studio.repository.EnvironmentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,9 +32,6 @@ class EnvironmentServiceTest {
     EnvironmentRepository environmentRepository;
 
     @InjectMock
-    DeploymentRepository deploymentRepository;
-
-    @InjectMock
     CredentialEncryptionService encryption;
 
     @InjectMock
@@ -42,6 +39,9 @@ class EnvironmentServiceTest {
 
     @Inject
     EnvironmentService environmentService;
+
+    @Inject
+    Validator validator;
 
     private Environment environment;
 
@@ -60,7 +60,6 @@ class EnvironmentServiceTest {
         Principal principal = mock();
         when(principal.getName()).thenReturn("admin-user");
         when(securityIdentity.getPrincipal()).thenReturn(principal);
-        when(encryption.isConfigured()).thenReturn(true);
         when(encryption.encrypt(anyString())).thenAnswer(invocation -> "v1:enc(" + invocation.getArgument(0) + ")");
     }
 
@@ -98,10 +97,14 @@ class EnvironmentServiceTest {
     }
 
     @Test
-    @DisplayName("Should reject a non-http URL")
-    void createRejectsInvalidUrl() {
-        assertThrows(BadRequestException.class, () -> environmentService.create(
-                new EnvironmentRequestDTO("Ontwikkel", "ftp://engine.example.com", null, null, true)));
+    @DisplayName("Should only accept absolute http(s) URLs")
+    void requestValidatesUrl() {
+        for (String invalid : new String[]{"ftp://engine.example.com", "engine.example.com", "http:///engine-rest", " https://engine.example.com"}) {
+            var violations = validator.validate(new EnvironmentRequestDTO("Ontwikkel", invalid, null, null, true));
+            assertEquals(1, violations.size(), invalid);
+            assertEquals("URL must be an absolute http(s) URL", violations.iterator().next().getMessage());
+        }
+        assertTrue(validator.validate(new EnvironmentRequestDTO("Ontwikkel", "HTTPS://engine.example.com:8443/engine-rest", null, null, true)).isEmpty());
     }
 
     @Test
@@ -171,15 +174,13 @@ class EnvironmentServiceTest {
     }
 
     @Test
-    @DisplayName("Should unlink deployments before deleting an environment")
-    void deleteUnlinksDeployments() {
+    @DisplayName("Should delete an environment")
+    void deleteRemovesEnvironment() {
         when(environmentRepository.findVisible(1L)).thenReturn(environment);
 
         environmentService.delete(1L);
 
-        var order = inOrder(deploymentRepository, environmentRepository);
-        order.verify(deploymentRepository).update("deployedTo = null where deployedTo.id = ?1", 1L);
-        order.verify(environmentRepository).delete(environment);
+        verify(environmentRepository).delete(environment);
     }
 
     @Test
@@ -190,6 +191,6 @@ class EnvironmentServiceTest {
         assertThrows(NotFoundException.class, () -> environmentService.get(2L));
         assertThrows(NotFoundException.class, () -> environmentService.delete(2L));
         assertThrows(NotFoundException.class, () -> environmentService.testConnection(2L));
-        verifyNoInteractions(deploymentRepository);
+        verify(environmentRepository, never()).delete(any(Environment.class));
     }
 }

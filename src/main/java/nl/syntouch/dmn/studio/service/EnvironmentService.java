@@ -12,12 +12,9 @@ import nl.syntouch.dmn.studio.client.OperatonClientFactory;
 import nl.syntouch.dmn.studio.model.Deployment;
 import nl.syntouch.dmn.studio.model.Environment;
 import nl.syntouch.dmn.studio.model.dto.*;
-import nl.syntouch.dmn.studio.repository.DeploymentRepository;
 import nl.syntouch.dmn.studio.repository.EnvironmentRepository;
 import org.jboss.logging.Logger;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -27,11 +24,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EnvironmentService {
     private static final Logger LOG = Logger.getLogger(EnvironmentService.class);
-    private static final OperatonClientFactory.Timeouts CONNECTION_TEST_TIMEOUTS =
-            new OperatonClientFactory.Timeouts(Duration.ofSeconds(5), Duration.ofSeconds(10));
 
     private final EnvironmentRepository environments;
-    private final DeploymentRepository deployments;
     private final CredentialEncryptionService encryption;
     private final OperatonClientFactory clients;
     private final SecurityIdentity identity;
@@ -73,10 +67,7 @@ public class EnvironmentService {
     }
 
     public void delete(Long id) {
-        Environment environment = find(id);
-        // Deployments stay visible without an environment; the FK also does ON DELETE SET NULL.
-        deployments.update("deployedTo = null where deployedTo.id = ?1", id);
-        environments.delete(environment);
+        environments.delete(find(id));
     }
 
     public ConnectionTestResultDTO testConnection(Long id) {
@@ -99,8 +90,7 @@ public class EnvironmentService {
     private ConnectionTestResultDTO testConnection(String url, String username, String password) {
         long start = System.nanoTime();
         try {
-            // Requires authentication and read access to deployments, so it validates credentials too.
-            clients.deploymentApi(url, username, password, CONNECTION_TEST_TIMEOUTS)
+            clients.connectionTestApi(url, username, password)
                     .getDeploymentsCount(null, null, null, null, null, null, null, null, null, null);
             return new ConnectionTestResultDTO(true, 200, "Connection successful", elapsedMs(start));
         } catch (WebApplicationException e) {
@@ -135,38 +125,22 @@ public class EnvironmentService {
         return name;
     }
 
-    private static String normalizeUrl(String value) {
-        String url = value.trim();
-        while (url.endsWith("/")) url = url.substring(0, url.length() - 1);
-        try {
-            URI uri = new URI(url);
-            if (!("http".equalsIgnoreCase(uri.getScheme()) || "https".equalsIgnoreCase(uri.getScheme())) || uri.getHost() == null) {
-                throw new BadRequestException("URL must be an absolute http(s) URL");
-            }
-        } catch (URISyntaxException e) {
-            throw new BadRequestException("URL is invalid");
-        }
-        return url;
+    private static String normalizeUrl(String url) {
+        return url.replaceAll("/+$", "");
     }
 
     private void applyCredentials(Environment environment, String requestedUsername, String requestedPassword) {
         String username = trimToNull(requestedUsername);
         String password = blankToNull(requestedPassword);
-        if (username == null) {
-            if (password != null) throw new BadRequestException("Username is required when a password is provided");
-            environment.setUsername(null);
-            environment.setPasswordEncrypted(null);
-            return;
+        if (username == null && password != null) {
+            throw new BadRequestException("Username is required when a password is provided");
         }
-        if (password == null) {
-            if (environment.getPasswordEncrypted() == null) {
-                throw new BadRequestException("Password is required when a username is provided");
-            }
-        } else {
-            if (!encryption.isConfigured()) {
-                throw new WebApplicationException("Encryption key is not configured (DMN_STUDIO_ENCRYPTION_KEY)", 500);
-            }
+        if (username == null) {
+            environment.setPasswordEncrypted(null);
+        } else if (password != null) {
             environment.setPasswordEncrypted(encryption.encrypt(password));
+        } else if (environment.getPasswordEncrypted() == null) {
+            throw new BadRequestException("Password is required when a username is provided");
         }
         environment.setUsername(username);
     }
@@ -187,13 +161,9 @@ public class EnvironmentService {
 
     private static EnvironmentDeploymentDTO deploymentResponse(Deployment deployment) {
         var version = deployment.getVersion();
-        var versionDTO = version == null ? null : new DeploymentDMNDTO.DMNVersionSubDTO(version.getVersion(),
-                version.getStatus(), version.getModifiedBy(), version.getModifiedDate(), version.getCreatedBy(),
-                version.getCreatedDate());
-        var dmn = version == null ? null : version.getDmn();
-        return new EnvironmentDeploymentDTO(deployment.getId(), versionDTO, deployment.getDeployedBy(),
-                deployment.getDeployedTime(), deployment.getDeploymentRef(),
-                dmn == null ? null : dmn.getId(), dmn == null ? null : dmn.getName());
+        return new EnvironmentDeploymentDTO(deployment.getId(), DeploymentDMNDTO.DMNVersionSubDTO.from(version),
+                deployment.getDeployedBy(), deployment.getDeployedTime(), deployment.getDeploymentRef(),
+                version.getDmn().getId(), version.getDmn().getName());
     }
 
     private static String trimToNull(String value) {
