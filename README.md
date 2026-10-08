@@ -108,10 +108,13 @@ services:
       QUARKUS_OIDC_CLIENT_ID: quarkus-backend
       QUARKUS_OIDC_CREDENTIALS_SECRET: YourKeycloakClientSecret
       
-      # Operaton REST API Configuration
-      QUARKUS_REST_CLIENT_OPERATON_REST_API_JSON_URL: http://operaton:8085/engine-rest
+      # Operaton engine used for unit tests (deployment environments are managed in the application)
+      QUARKUS_REST_CLIENT_OPERATON_REST_API_UT_URL: http://operaton:8085
       QUARKUS_OPENAPI_GENERATOR_OPERATON_REST_API_JSON_AUTH_BASIC_AUTH_USERNAME: demo
       QUARKUS_OPENAPI_GENERATOR_OPERATON_REST_API_JSON_AUTH_BASIC_AUTH_PASSWORD: demo
+
+      # AES-256 key (base64, 32 bytes) for environment passwords, e.g. `openssl rand -base64 32`
+      DMN_STUDIO_ENCRYPTION_KEY: "<output of openssl rand -base64 32>"
       
       # Keycloak Admin API Configuration
       QUARKUS_REST_CLIENT_KEYCLOAK_API_URL: http://keycloak:8181
@@ -205,10 +208,15 @@ The following configuration properties are available for development:
 | `quarkus.oidc.client-id`                                                    | Keycloak OIDC client identifier | `quarkus-backend` |
 | `quarkus.oidc.credentials.secret`                                           | Keycloak client secret for authentication | `YsVBOJj2avKCn7erFaNKaWdMmGXbjGgY` |
 | `quarkus.oidc.auth-server-url`                                              | Keycloak authentication server URL | `http://localhost:8181/realms/dmn_studio` |
-| `quarkus.rest-client.operaton_rest_api_{test,ut,acc,prod}.url` | Operaton workflow engine base URLs | `http://localhost:8085` |
-| `operaton.context-path` / `OPERATON_CONTEXT_PATH`                            | Context path shared by the Operaton REST endpoints | `/engine-rest` |
-| `quarkus.openapi-generator.operaton-rest-api_json.auth.basic_auth.username` | Basic auth username for Operaton API | `demo` |
-| `quarkus.openapi-generator.operaton-rest-api_json.auth.basic_auth.password` | Basic auth password for Operaton API | `demo` |
+| `quarkus.rest-client.operaton_rest_api_ut.url`                              | Operaton engine base URL used for unit tests | `http://localhost:8085` |
+| `operaton.context-path` / `OPERATON_CONTEXT_PATH`                            | Context path of the unit test Operaton REST API | `/engine-rest` |
+| `quarkus.openapi-generator.operaton-rest-api_json.auth.basic_auth.username` | Basic auth username for the unit test Operaton API | `demo` |
+| `quarkus.openapi-generator.operaton-rest-api_json.auth.basic_auth.password` | Basic auth password for the unit test Operaton API | `demo` |
+| `dmnstudio.encryption.key` / `DMN_STUDIO_ENCRYPTION_KEY`                     | Base64 AES-256 key (32 bytes) used to encrypt environment passwords. Without it no passwords can be stored or used; an invalid key prevents startup. Keep it safe: losing it means re-entering all passwords. | `openssl rand -base64 32` |
+
+Deployment environments (full engine URL including context path, username and password) are managed by a
+`dmnstudio_admin` via `/api/environment` and are no longer configured through
+`quarkus.rest-client.operaton_rest_api_{test,acc,prod}.url`.
 | `quarkus.rest-client.keycloak-api.url`                                      | Keycloak Admin API base URL | `http://localhost:8181` |
 
 
