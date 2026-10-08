@@ -50,7 +50,7 @@ public class UnitTestService {
         DMN dmn = dmnRepository.findByIdOptional(deployTestDTO.dmnId()).orElseThrow();
         DMNVersion dmnVersion = dmnVersionRepository.findByIdOptional(new DMNVersionId(dmn.getId(), deployTestDTO.version())).orElseThrow();
 
-        DeploymentWithDefinitionsDto deploymentWithDefinitionsDto = createTestDeployment(deployTestDTO, dmn, dmnVersion);
+        DeploymentWithDefinitionsDto deploymentWithDefinitionsDto = createTestDeployment(dmn, dmnVersion);
         try {
             UnittestResultDTO result = callTestDeployment(deploymentWithDefinitionsDto, deployTestDTO);
 
@@ -64,12 +64,12 @@ public class UnitTestService {
     }
 
     private DeploymentWithDefinitionsDto createTestDeployment(DMN dmn, DMNVersion dmnVersion) throws IOException {
-        Environment test_env = Environment.find("internal = true and lower(name) = ?1", "test").firstResult();
+        Environment testEnv = Environment.find("internal = true and lower(name) = ?1", "test").firstResult();
 
         DeployDTO deploymentData = new DeployDTO(
                 dmn,
                 dmnVersion.getVersion(),
-                test_env,
+                testEnv,
                 "unit-test-deployments",
                 identity.getPrincipal().getName(),
                 false,
