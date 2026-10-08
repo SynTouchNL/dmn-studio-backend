@@ -64,7 +64,7 @@ public class UnitTestService {
     }
 
     private DeploymentWithDefinitionsDto createTestDeployment(DeployTestDTO deployTestDTO, DMN dmn, DMNVersion dmnVersion) throws IOException {
-        Environment test_env = Environment.find("name", "test").firstResult();
+        Environment test_env = Environment.find("internal = true and lower(name) = ?1", "test").firstResult();
 
         DeployDTO deploymentData = new DeployDTO(
                 dmn,

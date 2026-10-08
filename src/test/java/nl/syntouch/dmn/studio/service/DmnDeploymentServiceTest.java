@@ -63,6 +63,11 @@ class DmnDeploymentServiceTest {
 
         testEnvironment = new Environment();
         testEnvironment.setName("Test Environment");
+        testEnvironment.setUrl("http://localhost:8085/engine-rest");
+        testEnvironment.setCreatedAt(Instant.now());
+        testEnvironment.setUpdatedAt(Instant.now());
+        testEnvironment.setCreatedBy("Test User");
+        testEnvironment.setUpdatedBy("Test User");
         testEnvironment.persist();
 
         Principal mockPrincipal = mock(Principal.class);
@@ -120,14 +125,13 @@ class DmnDeploymentServiceTest {
     }
 
     private DeployDTO createDefaultDeployDTO(DMN dmn, Long version) {
-        Environment mockEnv = new Environment();
-        mockEnv.setId(1L);
-        mockEnv.setName("Test Environment");
+        Environment requestedEnv = new Environment();
+        requestedEnv.setId(testEnvironment.getId());
 
         return new DeployDTO(
                 dmn,
                 version,
-                mockEnv,
+                requestedEnv,
                 "tenantId",
                 "source",
                 true,

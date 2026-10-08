@@ -8,9 +8,11 @@ import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.WebApplicationException;
 import lombok.RequiredArgsConstructor;
+import nl.syntouch.dmn.studio.client.OperatonClientFactory;
 import nl.syntouch.dmn.studio.model.DMN;
 import nl.syntouch.dmn.studio.model.DMNVersion;
 import nl.syntouch.dmn.studio.model.Deployment;
+import nl.syntouch.dmn.studio.model.Environment;
 import nl.syntouch.dmn.studio.model.composites.DMNVersionId;
 import nl.syntouch.dmn.studio.model.dto.DeployDTO;
 import nl.syntouch.dmn.studio.model.dto.DeploymentDMNDTO;
@@ -18,8 +20,7 @@ import nl.syntouch.dmn.studio.model.dto.DeploymentDTO;
 import nl.syntouch.dmn.studio.repository.DeploymentRepository;
 import nl.syntouch.dmn.studio.repository.DmnRepository;
 import nl.syntouch.dmn.studio.repository.DmnVersionRepository;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.rest.client.RestClientBuilder;
+import nl.syntouch.dmn.studio.repository.EnvironmentRepository;
 import org.jboss.logging.Logger;
 import org.openapi.quarkus.operaton_rest_api_json.api.DeploymentApi;
 import org.openapi.quarkus.operaton_rest_api_json.model.DeploymentWithDefinitionsDto;
@@ -38,42 +39,32 @@ public class DmnDeploymentService {
 
     private static final Logger LOG = Logger.getLogger(DmnDeploymentService.class);
 
-    @ConfigProperty(name = "quarkus.rest-client.operaton_rest_api_test.url")
-    String testUrl;
-
-    @ConfigProperty(name = "quarkus.rest-client.operaton_rest_api_acc.url")
-    String accUrl;
-
-    @ConfigProperty(name = "quarkus.rest-client.operaton_rest_api_prod.url")
-    String prodUrl;
-
-    @ConfigProperty(name = "operaton.context-path")
-    String contextPath;
-
     private final SecurityIdentity identity;
     private final DmnRepository dmnRepository;
     private final DmnVersionRepository dmnVersionRepository;
     private final DeploymentRepository deploymentRepository;
+    private final EnvironmentRepository environmentRepository;
+    private final OperatonClientFactory operatonClientFactory;
 
-    private String selectUrl(Long envId) {
-        String envUrl = "";
-        if (envId == 1L) {
-            envUrl = testUrl;
-        } else if (envId == 2L) {
-            envUrl = accUrl;
-        } else if (envId == 3L) {
-            envUrl = prodUrl;
-        } else {
+    private Environment findDeployTarget(Environment requested) {
+        if (requested == null || requested.getId() == null) {
+            throw new BadRequestException("Environment is required");
+        }
+        // Only the id is trusted; url, credentials and status are always read from the database.
+        Environment environment = environmentRepository.findVisible(requested.getId());
+        if (environment == null) {
             throw new NotFoundException("Environment not found");
         }
-        return envUrl + contextPath;
+        if (!environment.isActive()) {
+            throw new WebApplicationException("Environment '%s' is inactive".formatted(environment.getName()), 409);
+        }
+        return environment;
     }
 
     @Transactional
     public DeploymentWithDefinitionsDto createDeployment(DeployDTO deployDTO) throws IOException {
-        DeploymentApi customClient = RestClientBuilder.newBuilder()
-                .baseUri(selectUrl(deployDTO.environment().getId()))
-                .build(DeploymentApi.class);
+        Environment environment = findDeployTarget(deployDTO.environment());
+        DeploymentApi customClient = operatonClientFactory.deploymentApi(environment);
 
         DMN dmn = dmnRepository.findByIdOptional(deployDTO.dmn().getId()).orElseThrow();
         DMNVersion dmnVersion = dmnVersionRepository.findByIdOptional(new DMNVersionId(dmn.getId(), deployDTO.version())).orElseThrow();
@@ -82,7 +73,7 @@ public class DmnDeploymentService {
 
         try {
             DeploymentWithDefinitionsDto deploymentWithDefinitionsDto = customClient.createDeployment(form);
-            Deployment deployment = getDeployment(deployDTO, dmnVersion, deploymentWithDefinitionsDto);
+            Deployment deployment = getDeployment(deployDTO, dmnVersion, environment, deploymentWithDefinitionsDto);
             persistDeploymentOrCompensate(customClient, deployment, deploymentWithDefinitionsDto.getId());
             return deploymentWithDefinitionsDto;
         } catch (Exception e) {
@@ -114,11 +105,12 @@ public class DmnDeploymentService {
         }
     }
 
-    public Deployment getDeployment(DeployDTO deployDTO, DMNVersion dmnVersion, DeploymentWithDefinitionsDto deploymentWithDefinitionsDto) {
+    public Deployment getDeployment(DeployDTO deployDTO, DMNVersion dmnVersion, Environment environment,
+                                    DeploymentWithDefinitionsDto deploymentWithDefinitionsDto) {
         Deployment deployment = new Deployment();
         deployment.setId(deployDTO.dmn().getId());
         deployment.setVersion(dmnVersion);
-        deployment.setDeployedTo(deployDTO.environment());
+        deployment.setDeployedTo(environment);
         deployment.setDeployedBy(identity.getPrincipal().getName());
         deployment.setDeploymentRef(deploymentWithDefinitionsDto.getId());
         return deployment;
@@ -161,14 +153,16 @@ public class DmnDeploymentService {
             throw new NotFoundException("Deployment not found in local database");
         }
         String deploymentRef = deploymentFound.getDeploymentRef();
-        Long deployedEnvironmentId = deploymentFound.getDeployedTo().getId();
+        Environment deployedEnvironment = deploymentFound.getDeployedTo();
+        if (deployedEnvironment == null) {
+            throw new WebApplicationException("Deployment's environment no longer exists", 409);
+        }
+        Long deployedEnvironmentId = deployedEnvironment.getId();
         if (!Objects.equals(envId, deployedEnvironmentId)) {
             throw new BadRequestException("Deployment belongs to environment " + deployedEnvironmentId);
         }
 
-        DeploymentApi customClient = RestClientBuilder.newBuilder()
-                .baseUri(selectUrl(deployedEnvironmentId))
-                .build(DeploymentApi.class);
+        DeploymentApi customClient = operatonClientFactory.deploymentApi(deployedEnvironment);
         try {
             customClient.deleteDeployment(deploymentRef, true, true, true);
         } catch (WebApplicationException e) {
@@ -204,8 +198,8 @@ public class DmnDeploymentService {
                 foundDmn.getId(),
                 foundDeployment.getDeployedBy(),
                 foundDeployment.getDeployedTime(),
-                foundDeployment.getDeployedTo().getId(),
-                foundDeployment.getDeployedTo().getName(),
+                foundDeployment.getDeployedTo() != null ? foundDeployment.getDeployedTo().getId() : null,
+                foundDeployment.getDeployedTo() != null ? foundDeployment.getDeployedTo().getName() : null,
                 foundDeployment.getDeploymentRef(),
                 subDTO,
                 foundDmn);
@@ -228,8 +222,8 @@ public class DmnDeploymentService {
                     dmn.getId(),
                     deployment.getDeployedBy(),
                     deployment.getDeployedTime(),
-                    deployment.getDeployedTo().getId(),
-                    deployment.getDeployedTo().getName(),
+                    deployment.getDeployedTo() != null ? deployment.getDeployedTo().getId() : null,
+                    deployment.getDeployedTo() != null ? deployment.getDeployedTo().getName() : null,
                     deployment.getDeploymentRef(),
                     subDTO,
                     dmn);
