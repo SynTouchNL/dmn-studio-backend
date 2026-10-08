@@ -4,9 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-/**
- * A null/blank password keeps the stored one. A blank username removes the credentials.
- */
 public record EnvironmentRequestDTO(
         @NotBlank(message = "Name is required")
         @Size(max = 255, message = "Name must be at most 255 characters")

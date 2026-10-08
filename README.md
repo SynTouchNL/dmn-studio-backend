@@ -213,10 +213,6 @@ The following configuration properties are available for development:
 | `quarkus.openapi-generator.operaton-rest-api_json.auth.basic_auth.username` | Basic auth username for the unit test Operaton API | `demo` |
 | `quarkus.openapi-generator.operaton-rest-api_json.auth.basic_auth.password` | Basic auth password for the unit test Operaton API | `demo` |
 | `dmnstudio.encryption.key` / `DMN_STUDIO_ENCRYPTION_KEY`                     | Base64 AES-256 key (32 bytes) used to encrypt environment passwords. Without it no passwords can be stored or used; an invalid key prevents startup. Keep it safe: losing it means re-entering all passwords. | `openssl rand -base64 32` |
-
-Deployment environments (full engine URL including context path, username and password) are managed by a
-`dmnstudio_admin` via `/api/environment` and are no longer configured through
-`quarkus.rest-client.operaton_rest_api_{test,acc,prod}.url`.
 | `quarkus.rest-client.keycloak-api.url`                                      | Keycloak Admin API base URL | `http://localhost:8181` |
 
 

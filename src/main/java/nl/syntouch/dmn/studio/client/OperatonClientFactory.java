@@ -18,10 +18,6 @@ import java.time.Duration;
 import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Builds Operaton clients for environments stored in the database: the full URL (including context path)
- * and per-environment basic auth replace the env var based configuration.
- */
 @ApplicationScoped
 @RequiredArgsConstructor
 public class OperatonClientFactory {
@@ -37,7 +33,6 @@ public class OperatonClientFactory {
     public DeploymentApi deploymentApi(String url, String username, String password, Timeouts timeouts) {
         RestClientBuilder builder = RestClientBuilder.newBuilder()
                 .baseUri(URI.create(url))
-                // Runs after the generated CompositeAuthenticationProvider so the global basic auth never leaks.
                 .register(new BasicAuthFilter(username, password), Priorities.AUTHENTICATION + 100);
         if (timeouts != null) {
             builder.connectTimeout(timeouts.connect().toMillis(), TimeUnit.MILLISECONDS)

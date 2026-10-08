@@ -1,6 +1,3 @@
--- Connection details move from env vars to the database. They stay nullable so existing
--- environments survive the upgrade; the API requires them and the UI enforces filling them in.
--- Audit columns have defaults so the previous app version can still insert rows during a rollout.
 ALTER TABLE environments
     ADD COLUMN url                VARCHAR(2048),
     ADD COLUMN username           VARCHAR(255),

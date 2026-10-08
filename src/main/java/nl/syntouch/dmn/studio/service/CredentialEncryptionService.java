@@ -34,7 +34,11 @@ public class CredentialEncryptionService {
     private final SecureRandom random = new SecureRandom();
 
     public CredentialEncryptionService(@ConfigProperty(name = KEY_PROPERTY) Optional<String> base64Key) {
-        this.key = base64Key.map(String::trim).filter(value -> !value.isEmpty()).map(CredentialEncryptionService::parseKey).orElse(null);
+        this.key = base64Key
+                .map(String::trim)
+                .filter(value -> !value.isEmpty())
+                .map(CredentialEncryptionService::parseKey)
+                .orElse(null);
     }
 
     public boolean isConfigured() {
