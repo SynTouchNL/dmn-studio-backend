@@ -99,7 +99,8 @@ class EnvironmentServiceTest {
     @Test
     @DisplayName("Should only accept absolute http(s) URLs")
     void requestValidatesUrl() {
-        for (String invalid : new String[]{"ftp://engine.example.com", "engine.example.com", "http:///engine-rest", " https://engine.example.com"}) {
+        for (String invalid : new String[]{"ftp://engine.example.com", "engine.example.com", "http:///engine-rest", " https://engine.example.com",
+                "https://user:pass@engine.example.com", "https://engine.example.com/engine-rest?x=1", "https://engine.example.com#frag"}) {
             var violations = validator.validate(new EnvironmentRequestDTO("Ontwikkel", invalid, null, null, true));
             assertEquals(1, violations.size(), invalid);
             assertEquals("URL must be an absolute http(s) URL", violations.iterator().next().getMessage());

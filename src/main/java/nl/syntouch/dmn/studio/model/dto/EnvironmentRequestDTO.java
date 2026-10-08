@@ -15,7 +15,7 @@ public record EnvironmentRequestDTO(
         String url,
         @Size(max = 255, message = "Username must be at most 255 characters")
         String username,
-        @Size(max = 512, message = "Password must be at most 512 characters")
+        @Size(max = 200, message = "Password must be at most 200 characters")
         String password,
         @NotNull(message = "Active status is required")
         Boolean active

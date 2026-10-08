@@ -72,25 +72,13 @@ public class EnvironmentService {
 
     public ConnectionTestResultDTO testConnection(Long id) {
         Environment environment = find(id);
-        if (environment.getUrl() == null) {
+        String url = environment.getUrl();
+        if (url == null) {
             return new ConnectionTestResultDTO(false, null, "Environment has no URL configured", 0);
         }
-        return testConnection(environment.getUrl(), environment.getUsername(), clients.storedPassword(environment));
-    }
-
-    public ConnectionTestResultDTO testConnection(ConnectionTestRequestDTO request) {
-        String username = trimToNull(request.username());
-        String password = blankToNull(request.password());
-        if (username != null && password == null && request.environmentId() != null) {
-            password = clients.storedPassword(find(request.environmentId()));
-        }
-        return testConnection(normalizeUrl(request.url()), username, password);
-    }
-
-    private ConnectionTestResultDTO testConnection(String url, String username, String password) {
         long start = System.nanoTime();
         try {
-            clients.connectionTestApi(url, username, password)
+            clients.connectionTestApi(url, environment.getUsername(), clients.storedPassword(environment))
                     .getDeploymentsCount(null, null, null, null, null, null, null, null, null, null);
             return new ConnectionTestResultDTO(true, 200, "Connection successful", elapsedMs(start));
         } catch (WebApplicationException e) {

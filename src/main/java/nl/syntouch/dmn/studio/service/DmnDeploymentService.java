@@ -77,7 +77,7 @@ public class DmnDeploymentService {
             persistDeploymentOrCompensate(customClient, deployment, deploymentWithDefinitionsDto.getId());
             return deploymentWithDefinitionsDto;
         } catch (Exception e) {
-            throw new IOException("Kan DMN niet deployen: " + e.getMessage());
+            throw new IOException("Kan DMN niet deployen: " + e.getMessage(), e);
         } finally {
             deleteTempFile(form.data);
         }
@@ -148,21 +148,14 @@ public class DmnDeploymentService {
     }
 
     public void deleteDeployment(Long deploymentId, Long envId) throws NotFoundException {
-        Deployment deploymentFound = deploymentRepository.find("id = ?1", deploymentId).firstResult();
+        Deployment deploymentFound = deploymentRepository
+                .find("id = ?1 and deployedTo.id = ?2", deploymentId, envId).firstResult();
         if (deploymentFound == null) {
-            throw new NotFoundException("Deployment not found in local database");
+            throw new NotFoundException("Deployment not found in this environment");
         }
         String deploymentRef = deploymentFound.getDeploymentRef();
-        Environment deployedEnvironment = deploymentFound.getDeployedTo();
-        if (deployedEnvironment == null) {
-            throw new WebApplicationException("Deployment's environment no longer exists", 409);
-        }
-        Long deployedEnvironmentId = deployedEnvironment.getId();
-        if (!Objects.equals(envId, deployedEnvironmentId)) {
-            throw new BadRequestException("Deployment belongs to environment " + deployedEnvironmentId);
-        }
 
-        DeploymentApi customClient = operatonClientFactory.deploymentApi(deployedEnvironment);
+        DeploymentApi customClient = operatonClientFactory.deploymentApi(deploymentFound.getDeployedTo());
         try {
             customClient.deleteDeployment(deploymentRef, true, true, true);
         } catch (WebApplicationException e) {

@@ -8,7 +8,6 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import lombok.RequiredArgsConstructor;
-import nl.syntouch.dmn.studio.model.dto.ConnectionTestRequestDTO;
 import nl.syntouch.dmn.studio.model.dto.ConnectionTestResultDTO;
 import nl.syntouch.dmn.studio.model.dto.EnvironmentRequestDTO;
 import nl.syntouch.dmn.studio.model.dto.EnvironmentResponseDTO;
@@ -62,11 +61,4 @@ public class EnvironmentResource {
     @Path("/{id}/connection-test")
     @RolesAllowed(ROLE_ADMIN)
     public ConnectionTestResultDTO testConnection(@PathParam("id") Long id) { return service.testConnection(id); }
-
-    @POST
-    @Path("/connection-test")
-    @RolesAllowed(ROLE_ADMIN)
-    public ConnectionTestResultDTO testConnection(@Valid ConnectionTestRequestDTO request) {
-        return service.testConnection(request);
-    }
 }

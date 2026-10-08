@@ -14,9 +14,10 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * An absolute http(s) URL with a host, e.g. {@code https://engine.example.com/engine-rest}.
+ * An absolute http(s) URL with a host and optional path, e.g. {@code https://engine.example.com/engine-rest}.
+ * Credentials ({@code user:pass@}), query strings and fragments are rejected.
  */
-@URL(regexp = "^https?://[^\\s/?#]+([/?#]\\S*)?$", flags = Pattern.Flag.CASE_INSENSITIVE)
+@URL(regexp = "^https?://[^\\s/?#@]+(/[^\\s?#@]*)?$", flags = Pattern.Flag.CASE_INSENSITIVE)
 @ReportAsSingleViolation
 @Constraint(validatedBy = {})
 @Documented
