@@ -63,7 +63,7 @@ public class UnitTestService {
         }
     }
 
-    private DeploymentWithDefinitionsDto createTestDeployment(DeployTestDTO deployTestDTO, DMN dmn, DMNVersion dmnVersion) throws IOException {
+    private DeploymentWithDefinitionsDto createTestDeployment(DMN dmn, DMNVersion dmnVersion) throws IOException {
         Environment test_env = Environment.find("internal = true and lower(name) = ?1", "test").firstResult();
 
         DeployDTO deploymentData = new DeployDTO(
@@ -162,7 +162,7 @@ public class UnitTestService {
         return evaluateDecisionDto;
     }
 
-    private String buildOutputJSON(List<DeployTestDTO.ParamDTO> outputData) throws JsonProcessingException {
+    private String buildOutputJSON(List<DeployTestDTO.ParamDTO> outputData) {
         ObjectNode combinedObject = objectMapper.createObjectNode();
         for (DeployTestDTO.ParamDTO param : outputData) {
             ObjectNode valueObject = objectMapper.createObjectNode();
