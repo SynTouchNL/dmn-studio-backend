@@ -12,13 +12,12 @@ import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import nl.syntouch.dmn.studio.model.*;
 import nl.syntouch.dmn.studio.model.composites.DMNVersionId;
-import nl.syntouch.dmn.studio.model.dto.DeployDTO;
-import nl.syntouch.dmn.studio.model.dto.DeployTestDTO;
-import nl.syntouch.dmn.studio.model.dto.UnittestResultDTO;
+import nl.syntouch.dmn.studio.model.dto.deployment.DeployDTO;
+import nl.syntouch.dmn.studio.model.dto.test.DeployTestDTO;
+import nl.syntouch.dmn.studio.model.dto.test.UnittestResultDTO;
 import nl.syntouch.dmn.studio.repository.UnittestRepository;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.openapi.quarkus.operaton_rest_api_json.api.DeploymentApi;
 import org.openapi.quarkus.operaton_rest_api_json.model.DeploymentWithDefinitionsDto;
 import nl.syntouch.dmn.studio.repository.DmnRepository;
@@ -35,9 +34,6 @@ import java.util.*;
 @RequiredArgsConstructor
 @ApplicationScoped
 public class UnitTestService {
-    @RestClient
-    DeploymentApi deploymentApi;
-
     @ConfigProperty(name = "quarkus.rest-client.operaton_rest_api_ut.url")
     String unitTestUrl;
 
@@ -54,23 +50,26 @@ public class UnitTestService {
         DMN dmn = dmnRepository.findByIdOptional(deployTestDTO.dmnId()).orElseThrow();
         DMNVersion dmnVersion = dmnVersionRepository.findByIdOptional(new DMNVersionId(dmn.getId(), deployTestDTO.version())).orElseThrow();
 
-        DeploymentWithDefinitionsDto deploymentWithDefinitionsDto = createTestDeployment(deployTestDTO, dmn, dmnVersion);
-        UnittestResultDTO result = callTestDeployment(deploymentWithDefinitionsDto, deployTestDTO);
+        DeploymentWithDefinitionsDto deploymentWithDefinitionsDto = createTestDeployment(dmn, dmnVersion);
+        try {
+            UnittestResultDTO result = callTestDeployment(deploymentWithDefinitionsDto, deployTestDTO);
 
-        Test unitTest = getTest(deployTestDTO, dmnVersion, result.result());
-        unittestRepository.persist(unitTest);
+            Test unitTest = getTest(deployTestDTO, dmnVersion, result.result());
+            unittestRepository.persist(unitTest);
 
-        deleteTestDeployment(deployTestDTO, deploymentWithDefinitionsDto.getId()); // https://github.com/awaitility/awaitility
-        return result;
+            return result;
+        } finally {
+            deleteTestDeployment(deploymentWithDefinitionsDto.getId());
+        }
     }
 
-    private DeploymentWithDefinitionsDto createTestDeployment(DeployTestDTO deployTestDTO, DMN dmn, DMNVersion dmnVersion) throws IOException {
-        Environment test_env = Environment.find("name", "test").firstResult();
+    private DeploymentWithDefinitionsDto createTestDeployment(DMN dmn, DMNVersion dmnVersion) throws IOException {
+        Environment testEnv = Environment.find("internal = true and lower(name) = ?1", "test").firstResult();
 
         DeployDTO deploymentData = new DeployDTO(
                 dmn,
                 dmnVersion.getVersion(),
-                test_env,
+                testEnv,
                 "unit-test-deployments",
                 identity.getPrincipal().getName(),
                 false,
@@ -82,7 +81,11 @@ public class UnitTestService {
 
         var form = DmnDeploymentService.getCreateDeploymentMultipartForm(deploymentData, dmnVersion.getFileBlob());
         DeploymentApi unitTestClient = RestClientBuilder.newBuilder().baseUri(unitTestUrl + contextPath).build(DeploymentApi.class);
-        return unitTestClient.createDeployment(form);
+        try {
+            return unitTestClient.createDeployment(form);
+        } finally {
+            DmnDeploymentService.deleteTempFile(form.data);
+        }
     }
 
     private static Test getTest(DeployTestDTO deployTestDTO, DMNVersion dmnVersion, boolean passed) {
@@ -159,7 +162,7 @@ public class UnitTestService {
         return evaluateDecisionDto;
     }
 
-    private String buildOutputJSON(List<DeployTestDTO.ParamDTO> outputData) throws JsonProcessingException {
+    private String buildOutputJSON(List<DeployTestDTO.ParamDTO> outputData) {
         ObjectNode combinedObject = objectMapper.createObjectNode();
         for (DeployTestDTO.ParamDTO param : outputData) {
             ObjectNode valueObject = objectMapper.createObjectNode();
@@ -178,7 +181,7 @@ public class UnitTestService {
         return expectedArray.equals(actualArray);
     }
 
-    public void deleteTestDeployment(DeployTestDTO deployTestDTO, String deploymentId) {
+    public void deleteTestDeployment(String deploymentId) {
         try {
             DeploymentApi unitTestClient = RestClientBuilder.newBuilder().baseUri(unitTestUrl + contextPath).build(DeploymentApi.class);
             unitTestClient.deleteDeployment(deploymentId, true, true, true);

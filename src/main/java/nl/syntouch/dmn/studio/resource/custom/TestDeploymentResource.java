@@ -5,7 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
-import nl.syntouch.dmn.studio.model.dto.DeployTestDTO;
+import nl.syntouch.dmn.studio.model.dto.test.DeployTestDTO;
 import nl.syntouch.dmn.studio.service.UnitTestService;
 import java.io.IOException;
 

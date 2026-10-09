@@ -5,8 +5,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
-import nl.syntouch.dmn.studio.model.dto.ReviewDTO;
-import nl.syntouch.dmn.studio.model.dto.SubmissionDTO;
+import nl.syntouch.dmn.studio.model.dto.change.ReviewDTO;
+import nl.syntouch.dmn.studio.model.dto.change.SubmissionDTO;
 import nl.syntouch.dmn.studio.service.LifecycleService;
 
 import static nl.syntouch.dmn.studio.DmnStudioConstants.*;

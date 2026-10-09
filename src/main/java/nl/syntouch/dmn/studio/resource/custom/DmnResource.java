@@ -7,7 +7,7 @@ import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
 import nl.syntouch.dmn.studio.model.DMN;
 import nl.syntouch.dmn.studio.model.DMNVersion;
-import nl.syntouch.dmn.studio.model.dto.*;
+import nl.syntouch.dmn.studio.model.dto.dmn.*;
 import nl.syntouch.dmn.studio.service.DmnService;
 import nl.syntouch.dmn.studio.service.DmnVersionService;
 import java.net.URI;
