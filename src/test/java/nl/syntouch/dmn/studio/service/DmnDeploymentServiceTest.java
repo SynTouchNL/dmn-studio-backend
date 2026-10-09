@@ -36,6 +36,9 @@ class DmnDeploymentServiceTest {
     @InjectMock
     SecurityIdentity securityIdentity;
 
+    @InjectMock
+    CredentialEncryptionService encryption;
+
     @Inject
     DmnDeploymentService dmnDeploymentService;
 
@@ -64,6 +67,8 @@ class DmnDeploymentServiceTest {
         testEnvironment = new Environment();
         testEnvironment.setName("Test Environment");
         testEnvironment.setUrl("http://localhost:8085/engine-rest");
+        testEnvironment.setUsername("deployer");
+        testEnvironment.setPasswordEncrypted("v1:enc(secret)");
         testEnvironment.setCreatedAt(Instant.now());
         testEnvironment.setUpdatedAt(Instant.now());
         testEnvironment.setCreatedBy("Test User");
@@ -73,6 +78,7 @@ class DmnDeploymentServiceTest {
         Principal mockPrincipal = mock(Principal.class);
         when(mockPrincipal.getName()).thenReturn("testUser");
         when(securityIdentity.getPrincipal()).thenReturn(mockPrincipal);
+        when(encryption.decrypt(anyString())).thenReturn("secret");
     }
 
 

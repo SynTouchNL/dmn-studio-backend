@@ -17,6 +17,7 @@ import java.util.List;
 
 import static nl.syntouch.dmn.studio.DmnStudioConstants.ROLE_ADMIN;
 import static nl.syntouch.dmn.studio.DmnStudioConstants.ROLE_DEPLOYER;
+import static nl.syntouch.dmn.studio.DmnStudioConstants.ROLE_DEVELOPER;
 
 @Path("/environment")
 @ApplicationScoped
@@ -26,7 +27,7 @@ import static nl.syntouch.dmn.studio.DmnStudioConstants.ROLE_DEPLOYER;
 public class EnvironmentResource {
     private final EnvironmentService service;
 
-    @RolesAllowed({ROLE_ADMIN, ROLE_DEPLOYER})
+    @RolesAllowed({ROLE_ADMIN, ROLE_DEPLOYER, ROLE_DEVELOPER})
     @GET
     public List<EnvironmentResponseDTO> list() { return service.list(); }
 

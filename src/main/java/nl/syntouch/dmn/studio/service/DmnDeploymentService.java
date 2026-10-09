@@ -58,6 +58,12 @@ public class DmnDeploymentService {
         if (!environment.isActive()) {
             throw new WebApplicationException("Environment '%s' is inactive".formatted(environment.getName()), 409);
         }
+        if (environment.getUrl() == null) {
+            throw new WebApplicationException("Environment '%s' has no URL configured".formatted(environment.getName()), 409);
+        }
+        if (environment.getUsername() == null || environment.getPasswordEncrypted() == null) {
+            throw new WebApplicationException("Environment '%s' has no credentials configured".formatted(environment.getName()), 409);
+        }
         return environment;
     }
 

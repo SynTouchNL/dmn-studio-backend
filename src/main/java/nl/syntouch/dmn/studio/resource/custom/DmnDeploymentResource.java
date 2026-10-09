@@ -15,6 +15,7 @@ import java.net.URI;
 
 import static nl.syntouch.dmn.studio.DmnStudioConstants.ROLE_ADMIN;
 import static nl.syntouch.dmn.studio.DmnStudioConstants.ROLE_DEPLOYER;
+import static nl.syntouch.dmn.studio.DmnStudioConstants.ROLE_DEVELOPER;
 
 @Path("/deploy")
 @ApplicationScoped
@@ -37,6 +38,7 @@ public class DmnDeploymentResource {
 
     @GET
     @Path("/{deploymentId}")
+    @RolesAllowed({ROLE_ADMIN, ROLE_DEPLOYER, ROLE_DEVELOPER})
     public Response getDeployment(@PathParam("deploymentId") Long deploymentId) {
         return Response
                 .ok(dmnDeploymentService.getDeploymentWithDMN(deploymentId))
@@ -45,6 +47,7 @@ public class DmnDeploymentResource {
 
     @GET
     @Path("/")
+    @RolesAllowed({ROLE_ADMIN, ROLE_DEPLOYER, ROLE_DEVELOPER})
     public Response getAllDeployments() {
         return Response
                 .ok(dmnDeploymentService.getDeploymentsWithDMN())
