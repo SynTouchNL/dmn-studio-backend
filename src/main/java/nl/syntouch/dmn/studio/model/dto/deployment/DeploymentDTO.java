@@ -1,4 +1,4 @@
-package nl.syntouch.dmn.studio.model.dto;
+package nl.syntouch.dmn.studio.model.dto.deployment;
 
 import nl.syntouch.dmn.studio.model.DMN;
 import nl.syntouch.dmn.studio.model.DMNVersion;

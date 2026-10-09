@@ -8,9 +8,9 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import lombok.RequiredArgsConstructor;
-import nl.syntouch.dmn.studio.model.dto.ConnectionTestResultDTO;
-import nl.syntouch.dmn.studio.model.dto.EnvironmentRequestDTO;
-import nl.syntouch.dmn.studio.model.dto.EnvironmentResponseDTO;
+import nl.syntouch.dmn.studio.model.dto.environment.ConnectionTestResultDTO;
+import nl.syntouch.dmn.studio.model.dto.environment.EnvironmentRequestDTO;
+import nl.syntouch.dmn.studio.model.dto.environment.EnvironmentResponseDTO;
 import nl.syntouch.dmn.studio.service.EnvironmentService;
 
 import java.util.List;

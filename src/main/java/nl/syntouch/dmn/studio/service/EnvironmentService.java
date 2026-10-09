@@ -11,7 +11,8 @@ import lombok.RequiredArgsConstructor;
 import nl.syntouch.dmn.studio.client.OperatonClientFactory;
 import nl.syntouch.dmn.studio.model.Deployment;
 import nl.syntouch.dmn.studio.model.Environment;
-import nl.syntouch.dmn.studio.model.dto.*;
+import nl.syntouch.dmn.studio.model.dto.deployment.DeploymentDMNDTO;
+import nl.syntouch.dmn.studio.model.dto.environment.*;
 import nl.syntouch.dmn.studio.repository.EnvironmentRepository;
 import org.jboss.logging.Logger;
 

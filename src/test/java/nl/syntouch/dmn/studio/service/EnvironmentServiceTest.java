@@ -9,7 +9,7 @@ import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.WebApplicationException;
 import nl.syntouch.dmn.studio.model.Environment;
-import nl.syntouch.dmn.studio.model.dto.EnvironmentRequestDTO;
+import nl.syntouch.dmn.studio.model.dto.environment.EnvironmentRequestDTO;
 import nl.syntouch.dmn.studio.repository.EnvironmentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

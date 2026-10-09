@@ -1,4 +1,4 @@
-package nl.syntouch.dmn.studio.model.dto;
+package nl.syntouch.dmn.studio.model.dto.domain;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

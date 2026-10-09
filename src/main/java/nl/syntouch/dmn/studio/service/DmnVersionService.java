@@ -9,9 +9,9 @@ import lombok.RequiredArgsConstructor;
 import nl.syntouch.dmn.studio.model.DMN;
 import nl.syntouch.dmn.studio.model.DMNVersion;
 import nl.syntouch.dmn.studio.model.composites.DMNVersionId;
-import nl.syntouch.dmn.studio.model.dto.DMNUpdateFileDTO;
-import nl.syntouch.dmn.studio.model.dto.DMNVersionCreateDTO;
-import nl.syntouch.dmn.studio.model.dto.DMNVersionUpdateDTO;
+import nl.syntouch.dmn.studio.model.dto.dmn.DMNUpdateFileDTO;
+import nl.syntouch.dmn.studio.model.dto.dmn.DMNVersionCreateDTO;
+import nl.syntouch.dmn.studio.model.dto.dmn.DMNVersionUpdateDTO;
 import nl.syntouch.dmn.studio.repository.DmnRepository;
 import nl.syntouch.dmn.studio.repository.DmnVersionRepository;
 

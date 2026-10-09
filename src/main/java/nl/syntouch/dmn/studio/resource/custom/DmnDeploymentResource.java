@@ -5,7 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
-import nl.syntouch.dmn.studio.model.dto.DeployDTO;
+import nl.syntouch.dmn.studio.model.dto.deployment.DeployDTO;
 import nl.syntouch.dmn.studio.service.DmnDeploymentService;
 import org.openapi.quarkus.operaton_rest_api_json.model.DeploymentWithDefinitionsDto;
 

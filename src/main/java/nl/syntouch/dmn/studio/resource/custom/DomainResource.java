@@ -8,9 +8,9 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import jakarta.ws.rs.core.Context;
 import lombok.RequiredArgsConstructor;
-import nl.syntouch.dmn.studio.model.dto.DomainRequestDTO;
-import nl.syntouch.dmn.studio.model.dto.DomainPageResponseDTO;
-import nl.syntouch.dmn.studio.model.dto.DomainResponseDTO;
+import nl.syntouch.dmn.studio.model.dto.domain.DomainRequestDTO;
+import nl.syntouch.dmn.studio.model.dto.domain.DomainPageResponseDTO;
+import nl.syntouch.dmn.studio.model.dto.domain.DomainResponseDTO;
 import nl.syntouch.dmn.studio.service.DomainService;
 
 import static nl.syntouch.dmn.studio.DmnStudioConstants.*;

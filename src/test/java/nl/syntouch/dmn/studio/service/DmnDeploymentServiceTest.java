@@ -7,7 +7,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import nl.syntouch.dmn.studio.model.*;
 import nl.syntouch.dmn.studio.model.composites.DMNVersionId;
-import nl.syntouch.dmn.studio.model.dto.DeployDTO;
+import nl.syntouch.dmn.studio.model.dto.deployment.DeployDTO;
 import nl.syntouch.dmn.studio.repository.DmnRepository;
 import nl.syntouch.dmn.studio.repository.DmnVersionRepository;
 import org.junit.jupiter.api.BeforeEach;

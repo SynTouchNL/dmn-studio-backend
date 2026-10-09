@@ -1,4 +1,6 @@
-package nl.syntouch.dmn.studio.model.dto;
+package nl.syntouch.dmn.studio.model.dto.environment;
+
+import nl.syntouch.dmn.studio.model.dto.deployment.DeploymentDMNDTO;
 
 import java.time.Instant;
 
