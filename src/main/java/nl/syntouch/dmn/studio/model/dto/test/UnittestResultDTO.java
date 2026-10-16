@@ -1,4 +1,4 @@
-package nl.syntouch.dmn.studio.model.dto;
+package nl.syntouch.dmn.studio.model.dto.test;
 
 public record UnittestResultDTO (
         Boolean result,

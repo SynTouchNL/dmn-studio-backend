@@ -5,7 +5,7 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import nl.syntouch.dmn.studio.model.dto.ApiErrorResponse;
+import nl.syntouch.dmn.studio.model.dto.common.ApiErrorResponse;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 

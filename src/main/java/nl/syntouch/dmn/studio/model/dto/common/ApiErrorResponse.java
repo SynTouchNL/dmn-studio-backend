@@ -1,4 +1,4 @@
-package nl.syntouch.dmn.studio.model.dto;
+package nl.syntouch.dmn.studio.model.dto.common;
 
 import java.time.Instant;
 import java.util.List;

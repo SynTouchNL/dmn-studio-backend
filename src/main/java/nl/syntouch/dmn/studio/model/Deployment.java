@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import nl.syntouch.dmn.studio.model.composites.DeploymentId;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import java.time.Instant;
 
 @Getter
@@ -28,7 +30,8 @@ public class Deployment extends PanacheEntityBase {
 
     @JsonBackReference("deployments")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "environment_id", nullable = false)
+    @JoinColumn(name = "environment_id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private Environment deployedTo;
 
     @Column(name = "deployed_by", nullable = false)

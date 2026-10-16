@@ -7,7 +7,7 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import lombok.RequiredArgsConstructor;
 import nl.syntouch.dmn.studio.model.Domain;
-import nl.syntouch.dmn.studio.model.dto.*;
+import nl.syntouch.dmn.studio.model.dto.domain.*;
 import nl.syntouch.dmn.studio.repository.DomainRepository;
 import nl.syntouch.dmn.studio.repository.DmnRepository;
 import org.keycloak.representations.idm.AbstractUserRepresentation;

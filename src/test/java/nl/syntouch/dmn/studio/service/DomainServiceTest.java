@@ -10,7 +10,7 @@ import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.WebApplicationException;
 import nl.syntouch.dmn.studio.model.Domain;
-import nl.syntouch.dmn.studio.model.dto.DomainRequestDTO;
+import nl.syntouch.dmn.studio.model.dto.domain.DomainRequestDTO;
 import nl.syntouch.dmn.studio.repository.DmnRepository;
 import nl.syntouch.dmn.studio.repository.DomainRepository;
 import org.junit.jupiter.api.*;
