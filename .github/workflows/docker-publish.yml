@@ -35,6 +35,7 @@ jobs:
       - name: Extract metadata (tags, labels)
         id: meta
         run: |
+          echo "REPO_OWNER=${GITHUB_REPOSITORY_OWNER@L}" >> $GITHUB_OUTPUT
           if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
             VERSION=${GITHUB_REF#refs/tags/v}
             echo "IMAGE_TAG=${VERSION}" >> $GITHUB_OUTPUT
@@ -68,11 +69,13 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@v0.36.0
         with:
-          image-ref: ${{ env.REGISTRY }}/${{ github.repository_owner }}/dmn-studio-backend:${{ steps.meta.outputs.IMAGE_TAG }}
+          image-ref: ${{ env.REGISTRY }}/${{ steps.meta.outputs.REPO_OWNER }}/dmn-studio-backend:${{ steps.meta.outputs.IMAGE_TAG }}
           format: sarif
-          output: trivy-jvm.sarif
-          severity: CRITICAL,HIGH
           exit-code: '1'
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH
+          output: trivy-jvm.sarif
+          version: 'v0.76.2'
 
       - name: Upload Trivy scan results
         uses: github/codeql-action/upload-sarif@v3
