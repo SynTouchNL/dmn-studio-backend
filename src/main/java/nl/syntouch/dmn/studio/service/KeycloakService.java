@@ -61,11 +61,17 @@ public class KeycloakService {
                 .getUserMembers();
     }
 
-    public List<UserRepresentation> getUsers() {
+    public List<UserRepresentation> getUsers(String search, int max) {
+        if (search != null && !search.isBlank()) {
+            return keycloak
+                    .realm(realm)
+                    .users()
+                    .search(search, 0, max);
+        }
         return keycloak
                 .realm(realm)
                 .users()
-                .list();
+                .list(0, max);
     }
 
     public Optional<UserRepresentation> getUserByUsername(String username) {

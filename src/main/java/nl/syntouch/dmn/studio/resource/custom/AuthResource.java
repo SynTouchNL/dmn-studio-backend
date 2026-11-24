@@ -1,9 +1,11 @@
 package nl.syntouch.dmn.studio.resource.custom;
 
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import nl.syntouch.dmn.studio.service.KeycloakService;
@@ -29,8 +31,10 @@ public class AuthResource {
     @GET
     @Path("/users")
     @RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_APPROVER, ROLE_DEPLOYER})
-    public Response getAllUsers() {
-        List<UserRepresentation> users = keycloakService.getUsers();
+    public Response getAllUsers(
+            @QueryParam("search") String search,
+            @DefaultValue("20") @QueryParam("max") int max) {
+        List<UserRepresentation> users = keycloakService.getUsers(search, max);
         return Response.ok(users).build();
     }
 
