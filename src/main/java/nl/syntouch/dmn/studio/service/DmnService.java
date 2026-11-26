@@ -8,10 +8,11 @@ import lombok.RequiredArgsConstructor;
 import nl.syntouch.dmn.studio.model.DMN;
 import nl.syntouch.dmn.studio.model.DMNVersion;
 import nl.syntouch.dmn.studio.model.Domain;
-import nl.syntouch.dmn.studio.model.dto.DMNCreateDTO;
+import nl.syntouch.dmn.studio.model.dto.dmn.DMNCreateDTO;
+import nl.syntouch.dmn.studio.model.dto.dmn.DMNResponseDTO;
 import nl.syntouch.dmn.studio.repository.DmnRepository;
 import nl.syntouch.dmn.studio.repository.DomainRepository;
-import org.keycloak.representations.idm.UserRepresentation;
+import org.keycloak.representations.idm.AbstractUserRepresentation;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,9 +31,13 @@ public class DmnService {
         Domain domain = domainRepository.findByIdOptional(dmnDTO.domainId())
                 .orElseThrow(() -> new NotFoundException("Domain not found"));
 
+        String ownerId = keycloakService.getUserByUsername(dmnDTO.owner())
+                .map(AbstractUserRepresentation::getId)
+                .orElse(null);
+
         DMN dmn = new DMN();
         dmn.setName(dmnDTO.name());
-        dmn.setOwner(dmnDTO.owner());
+        dmn.setOwner(ownerId);
         dmn.setDomain(domain);
 
         DMNVersion version = new DMNVersion();
@@ -46,12 +51,18 @@ public class DmnService {
         return dmn;
     }
 
-    public List<DMN> getDMNs() {
-        List<DMN> dmns = dmnRepository.listAll();
-        for(DMN dmn : dmns) {
-            UserRepresentation user = keycloakService.getUserByUsername(dmn.getOwner());
-            dmn.setOwner(user.getFirstName() + " " + user.getLastName());
-        }
-        return dmns;
+    public List<DMNResponseDTO> getDMNs() {
+        return dmnRepository.listAll().stream()
+                .map(dmn -> DMNResponseDTO.from(dmn, getOwnerDisplayName(dmn.getOwner())))
+                .toList();
+    }
+
+    public DMNResponseDTO getDMN(Long dmnId) {
+        DMN dmn = dmnRepository.findByIdOptional(dmnId).orElseThrow(() -> new NotFoundException("DMN not found"));
+        return DMNResponseDTO.from(dmn, getOwnerDisplayName(dmn.getOwner()));
+    }
+
+    private String getOwnerDisplayName(String ownerId) {
+        return keycloakService.transformUUIDToUsername(ownerId).orElse(ownerId);
     }
 }

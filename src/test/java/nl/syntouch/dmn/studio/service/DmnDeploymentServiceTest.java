@@ -7,7 +7,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import nl.syntouch.dmn.studio.model.*;
 import nl.syntouch.dmn.studio.model.composites.DMNVersionId;
-import nl.syntouch.dmn.studio.model.dto.DeployDTO;
+import nl.syntouch.dmn.studio.model.dto.deployment.DeployDTO;
 import nl.syntouch.dmn.studio.repository.DmnRepository;
 import nl.syntouch.dmn.studio.repository.DmnVersionRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +15,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.security.Principal;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -34,6 +36,9 @@ class DmnDeploymentServiceTest {
     @InjectMock
     SecurityIdentity securityIdentity;
 
+    @InjectMock
+    CredentialEncryptionService encryption;
+
     @Inject
     DmnDeploymentService dmnDeploymentService;
 
@@ -45,6 +50,12 @@ class DmnDeploymentServiceTest {
     void setup() {
         Domain testDomain = new Domain();
         testDomain.setName("Test Domain");
+        testDomain.setActive(true);
+        testDomain.setOwner("Test Owner");
+        testDomain.setModifiedDate(Instant.now());
+        testDomain.setCreatedBy("Test User");
+        testDomain.setModifiedBy("Test User");
+        testDomain.setCreatedDate(Instant.now());
         testDomain.persist();
 
         testDmn = new DMN();
@@ -55,11 +66,19 @@ class DmnDeploymentServiceTest {
 
         testEnvironment = new Environment();
         testEnvironment.setName("Test Environment");
+        testEnvironment.setUrl("http://localhost:8085/engine-rest");
+        testEnvironment.setUsername("deployer");
+        testEnvironment.setPasswordEncrypted("v1:enc(secret)");
+        testEnvironment.setCreatedAt(Instant.now());
+        testEnvironment.setUpdatedAt(Instant.now());
+        testEnvironment.setCreatedBy("Test User");
+        testEnvironment.setUpdatedBy("Test User");
         testEnvironment.persist();
 
         Principal mockPrincipal = mock(Principal.class);
         when(mockPrincipal.getName()).thenReturn("testUser");
         when(securityIdentity.getPrincipal()).thenReturn(mockPrincipal);
+        when(encryption.decrypt(anyString())).thenReturn("secret");
     }
 
 
@@ -112,14 +131,13 @@ class DmnDeploymentServiceTest {
     }
 
     private DeployDTO createDefaultDeployDTO(DMN dmn, Long version) {
-        Environment mockEnv = new Environment();
-        mockEnv.setId(1L);
-        mockEnv.setName("Test Environment");
+        Environment requestedEnv = new Environment();
+        requestedEnv.setId(testEnvironment.getId());
 
         return new DeployDTO(
                 dmn,
                 version,
-                mockEnv,
+                requestedEnv,
                 "tenantId",
                 "source",
                 true,

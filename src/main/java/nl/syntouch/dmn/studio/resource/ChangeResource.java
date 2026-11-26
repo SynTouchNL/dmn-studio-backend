@@ -7,5 +7,5 @@ import nl.syntouch.dmn.studio.model.Change;
 import static nl.syntouch.dmn.studio.DmnStudioConstants.*;
 
 @RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_APPROVER, ROLE_DEPLOYER})
-public interface ChangeResource extends PanacheEntityResource<Change, Integer> {
+public interface ChangeResource extends PanacheEntityResource<Change, Long> {
 }
