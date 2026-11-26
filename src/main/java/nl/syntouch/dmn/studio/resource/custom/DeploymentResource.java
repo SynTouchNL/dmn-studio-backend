@@ -5,7 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import nl.syntouch.dmn.studio.model.Deployment;
-import nl.syntouch.dmn.studio.model.dto.DeploymentDTO;
+import nl.syntouch.dmn.studio.model.dto.deployment.DeploymentDTO;
 import nl.syntouch.dmn.studio.service.DmnDeploymentService;
 import java.util.List;
 
