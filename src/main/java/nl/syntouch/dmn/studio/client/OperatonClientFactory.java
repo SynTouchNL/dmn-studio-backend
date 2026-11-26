@@ -32,8 +32,6 @@ public class OperatonClientFactory {
 
     public DeploymentApi connectionTestApi(String url, String username, String password) {
         return builder(url, username, password)
-                .connectTimeout(5, TimeUnit.SECONDS)
-                .readTimeout(10, TimeUnit.SECONDS)
                 .build(DeploymentApi.class);
     }
 
