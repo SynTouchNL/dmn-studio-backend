@@ -1,4 +1,4 @@
-package nl.syntouch.dmn.studio.model.dto;
+package nl.syntouch.dmn.studio.model.dto.test;
 
 import java.util.LinkedHashMap;
 import java.util.List;
