@@ -7,7 +7,7 @@ import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
 import nl.syntouch.dmn.studio.model.DMN;
 import nl.syntouch.dmn.studio.model.DMNVersion;
-import nl.syntouch.dmn.studio.model.dto.*;
+import nl.syntouch.dmn.studio.model.dto.dmn.*;
 import nl.syntouch.dmn.studio.service.DmnService;
 import nl.syntouch.dmn.studio.service.DmnVersionService;
 import java.net.URI;
@@ -37,8 +37,16 @@ public class DmnResource {
     @GET
     @RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_APPROVER, ROLE_DEPLOYER, ROLE_READ})
     public Response getDMNs() {
-        List<DMN> dmns = dmnService.getDMNs();
+        List<DMNResponseDTO> dmns = dmnService.getDMNs();
         return Response.ok(dmns).build();
+    }
+
+    @GET
+    @Path("/{dmnId}")
+    @RolesAllowed({ROLE_ADMIN, ROLE_DEVELOPER, ROLE_APPROVER, ROLE_DEPLOYER, ROLE_READ})
+    public Response getDMN(@PathParam("dmnId") Long dmnId) {
+        DMNResponseDTO dmn = dmnService.getDMN(dmnId);
+        return Response.ok(dmn).build();
     }
 
     @Path("/{dmnId}/")
